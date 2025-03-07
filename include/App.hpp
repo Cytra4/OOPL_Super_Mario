@@ -3,6 +3,14 @@
 
 #include "pch.hpp" // IWYU pragma: export
 
+#include "Util/Renderer.hpp"
+#include "Util/Text.hpp"
+#include "Util/Time.hpp"
+#include "Characters/Mario.hpp"
+#include "GameUtils/Background.hpp"
+#include "GameUtils/CollisionBox.hpp"
+
+//*Screen scale can be changed in transform.hpp
 class App {
 public:
     enum class State {
@@ -19,11 +27,17 @@ public:
 
     void End(); // NOLINT(readability-convert-member-functions-to-static)
 
-private:
-    void ValidTask();
-
+    void MarioInitial();
+    
 private:
     State m_CurrentState = State::START;
+    Util::Renderer m_Renderer;
+    Util::Time m_Time;
+    bool m_EnterDown = false;
+    std::shared_ptr<Mario> mario;
+    std::shared_ptr<Background> background;
+
+    CollisionBox testFloor;
 };
 
 #endif

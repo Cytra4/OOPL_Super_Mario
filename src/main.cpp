@@ -1,25 +1,21 @@
+#include "Core/Context.hpp"
 #include "App.hpp"
 
-#include "Core/Context.hpp"
-
-int main(int, char**) {
+int main(int, char**){
     auto context = Core::Context::GetInstance();
-    App app;
-
-    while (!context->GetExit()) {
-        switch (app.GetCurrentState()) {
-            case App::State::START:
-                app.Start();
-                break;
-
-            case App::State::UPDATE:
-                app.Update();
-                break;
-
-            case App::State::END:
-                app.End();
-                context->SetExit(true);
-                break;
+    App game;
+    while (!context->GetExit()){
+        App::State current_state = game.GetCurrentState();
+        if (current_state == App::State::START){
+            game.Start();
+        }
+        else if (current_state == App::State::UPDATE){
+            game.Update();
+        }
+        else{
+            game.End();
+            context->SetExit(true);
+            break;
         }
         context->Update();
     }
