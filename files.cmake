@@ -5,13 +5,11 @@ set(SRC_FILES
     AppUpdate.cpp
     Character.cpp
     Mario.cpp
-    Camera.cpp
 )
 
 set(INCLUDE_FILES
     App.hpp
     Background.hpp
-    Camera.hpp
     Character.hpp
     Mario.hpp
 )

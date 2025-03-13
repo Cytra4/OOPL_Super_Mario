@@ -1,5 +1,7 @@
 #include "Characters/Mario.hpp"
 #include "Util/Logger.hpp"
+#include "Util/Input.hpp"
+#include "Util/Keycode.hpp"
 
 Mario::Mario(int jump, int movespeed, glm::vec2 position, float width, float height) 
 : Character(RESOURCE_DIR"/Sprites/Mario/Small/mario_default.png", movespeed, position, width, height){
@@ -40,21 +42,26 @@ void Mario::Behavior(){
             isRunning = false;
             velocity.x = 0;
         }
+
+        if (Util::Input::IsKeyPressed(Util::Keycode::J)){
+            ShootFireball();
+        }
     }
 
     AnimationHandle();
 }
 
 void Mario::PhysicProcess(double time){
-    glm::vec2 mario_pos = GetPosition();
+    glm::vec2 mario_pos = ani_obj->GetPosition();
     glm::vec2 mario_velo = GetVelocity();
     CollisionBox::State state = GetBox().GetCurrentState();
+    CollisionBox b = GetStandingOnBlock();
     double deltaTime = time;
 
     glm::vec2 new_pos;
     new_pos.x = mario_pos.x + deltaTime*mario_velo.x;
     new_pos.y = mario_pos.y + deltaTime*mario_velo.y;
-    SetPosition(new_pos);
+    ani_obj->SetPosition(new_pos);
     GetBox().SetPosition(new_pos);
 
     if (state != CollisionBox::State::COLLISION_ON_BOTTOM){
@@ -62,9 +69,6 @@ void Mario::PhysicProcess(double time){
     }
     else{
         SetOnGround(true);
-        CollisionBox b = GetStandingOnBlock();
-        float floorY = new_pos.y - b.GetHeight() / 2;
-        new_pos.y = floorY + b.GetHeight() / 2;
     }
     
     if (state == CollisionBox::State::COLLISION_ON_LEFT || state == CollisionBox::State::COLLISION_ON_RIGHT){
@@ -76,7 +80,7 @@ void Mario::PhysicProcess(double time){
 
     //after jump to the highest point, mario falls down 2x gravity
     if (mario_velo.y <= 0 && !IsOnGround()){
-        jumpFallGravity = 2;
+        jumpFallGravity = 3;
     }
 
     if (!IsOnGround()){
@@ -85,6 +89,9 @@ void Mario::PhysicProcess(double time){
     else{
         mario_velo.y = 0;
         jumpFallGravity = 1;
+
+        float floorY = new_pos.y - b.GetHeight() / 2;
+        new_pos.y = floorY + b.GetHeight() / 2;
     }
 
     SetVelocity(mario_velo);
@@ -109,18 +116,20 @@ void Mario::AnimationHandle(){
         new_animation = 0;
     }
     else{
-        SetDefaultSprite(GetDefaultSprite());
-        current_animation = -1;
+        ani_obj->SetDefaultSprite(ani_obj->GetDefaultSprite());
+        ani_obj->SetCurrentAnimation(-1);
     }
 
-    if (new_animation != -1 && new_animation != current_animation){
-        SetAnimation(new_animation, 25);
-        SetLooping(true);
-        PlayAnimation();
-        current_animation = new_animation;
+    int cur = ani_obj->GetCurrentAnimation();
+    if (new_animation != -1 && new_animation != cur){
+        ani_obj->SetAnimation(new_animation, 25);
+        ani_obj->SetLooping(true);
+        ani_obj->PlayAnimation();
+        ani_obj->SetCurrentAnimation(new_animation);
     }
 
-    m_Transform.scale = (IsFacingRight()) ? glm::vec2(1,1) : glm::vec2(-1,1);
+    glm::vec2 scale = (IsFacingRight()) ? glm::vec2(1,1) : glm::vec2(-1,1);
+    ani_obj->SetScale(scale);
 }
 
 void Mario::Hurt(){
@@ -137,26 +146,27 @@ void Mario::Hurt(){
 }
 
 void Mario::StateUpdate(Mode new_mode){
-    LOG_DEBUG("TRIGGERED");
     std::string new_state;
     switch(new_mode){
         case Mode::SMALL:
             new_state = "Small";
             SetHealth(1);
+            canShootFireballs = false;
             break;
         case Mode::BIG:
             new_state = "Big";
+            canShootFireballs = false;
             SetHealth(2);
             break;
         case Mode::FIRE:
             new_state = "Fire";
+            canShootFireballs = true;
             SetHealth(3);
             break;
         default:
             LOG_ERROR("Unexpected Mario Mode?");
             return;
     }
-    LOG_DEBUG("PASSED");
     AnimationUpdate(new_state);
     mario_mode = new_mode;
 }
@@ -184,15 +194,15 @@ void Mario::AnimationUpdate(std::string new_mode){
             return;
     }
 
-    //*The new collision box will just be set to the size of image for now
+    //* ↑ The new collision box will just be set to the size of image for now
 
-    std::string dftSprite = GetDefaultSprite();
-    std::vector<std::vector<std::string>>& animations = GetAnimationPaths();
+    std::string dftSprite = ani_obj->GetDefaultSprite();
+    std::vector<std::vector<std::string>>& animations = ani_obj->GetAnimationPaths();
 
     size_t pos = dftSprite.find(old_state);
     if (pos != std::string::npos){
         dftSprite.replace(pos, old_state.length(), new_mode);
-        SetDefaultSprite(dftSprite);
+        ani_obj->SetDefaultSprite(dftSprite);
     }
 
     for (int i = 0; i<int(animations.size()); i++){
@@ -203,4 +213,42 @@ void Mario::AnimationUpdate(std::string new_mode){
             }
         }
     }
+}
+
+void Mario::ShootFireball(){
+    if (canShootFireballs){
+        std::vector<std::vector<std::string>> paths;
+        std::vector<std::string> roll;
+        roll.reserve(4);
+        for (int i=0;i<4;i++){
+            roll.emplace_back(RESOURCE_DIR"/Sprites/Mario/Fireball/fireball" + std::to_string(i+1) + ".png");
+        }
+        std::vector<std::string> explode;
+        explode.reserve(3);
+        for (int i=0;i<3;i++){
+            explode.emplace_back(RESOURCE_DIR"/Sprites/Mario/Fireball/fireball_explode" + std::to_string(i+1) + ".png");
+        }
+        paths.push_back(roll);
+        paths.push_back(explode);
+        
+        glm::vec2 fireball_pos = ani_obj->GetPosition();
+        if (IsFacingRight()){
+            fireball_pos.x = fireball_pos.x + 20;
+        }
+        else{
+            fireball_pos.x = fireball_pos.x - 20;
+        }
+        
+        std::shared_ptr<Fireball> ball = std::make_shared<Fireball>(100,24,24,IsFacingRight(),
+        FireballType::MARIO, fireball_pos, paths);
+        ball->SetZIndex(70);
+
+        fireballs.push_back(ball);
+    }
+}
+
+std::vector<std::shared_ptr<Fireball>> Mario::GetFireballs(){
+    auto obj = fireballs;
+    fireballs.clear();
+    return obj;
 }

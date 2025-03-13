@@ -5,66 +5,10 @@
 
 Character::Character(std::string ImagePath, int movespeed, glm::vec2 position, float width, float height){
     this->movespeed = movespeed;
-    defaultSprite = ImagePath;
     box = CollisionBox(position, width, height);
-    SetDefaultSprite(defaultSprite);
-    SetPosition(position);
-}
-
-std::string Character::GetDefaultSprite(){
-    return defaultSprite;
-}
-
-void Character::SetDefaultSprite(std::string sprite){
-    defaultSprite = sprite;
-    m_Drawable = std::make_shared<Util::Image>(defaultSprite);
-}
-
-void Character::AddNewAnimation(std::vector<std::string> animation){
-    animationPaths.push_back(animation);
-}
-
-void Character::SetAnimation(int index, int interval){
-    std::vector<std::string> animation;
-    if (animationPaths.size() < 1 || index >= int(animationPaths.size())){
-        LOG_ERROR("ANIMATION SETTING FAILED");
-    }
-    else{
-        animation = animationPaths[index];
-        m_Drawable = std::make_shared<Util::Animation>(animation, false, interval, false, 0);
-    }
-}
-
-std::vector<std::vector<std::string>>& Character::GetAnimationPaths(){
-    return animationPaths;
-}
-
-void Character::SetLooping(bool looping){
-    auto temp = std::dynamic_pointer_cast<Util::Animation>(m_Drawable);
-    temp->SetLooping(looping);
-}
-
-bool Character::IfAnimationEnds(){
-    auto animation = std::dynamic_pointer_cast<Util::Animation>(m_Drawable);
-    return animation->GetCurrentFrameIndex() == animation->GetFrameCount() - 1;
-}
-
-bool Character::IsPlaying(){
-    return std::dynamic_pointer_cast<Util::Animation>(m_Drawable)->GetState() == Util::Animation::State::PLAY;
-}
-
-void Character::PlayAnimation(){
-    auto temp = std::dynamic_pointer_cast<Util::Animation>(m_Drawable);
-    temp->Play();
-}
-
-void Character::PauseAnimation(){
-    auto temp = std::dynamic_pointer_cast<Util::Animation>(m_Drawable);
-    temp->Pause();
-}
-
-glm::vec2 Character::GetPosition(){
-    return m_Transform.translation;
+    standingOn = CollisionBox(glm::vec2{0,0},-1,-1);
+    
+    ani_obj = std::make_shared<AnimationObject>(ImagePath,position);
 }
 
 void Character::SetVelocity(glm::vec2 velocity){
@@ -73,14 +17,6 @@ void Character::SetVelocity(glm::vec2 velocity){
 
 glm::vec2 Character::GetVelocity(){
     return velocity;
-}
-
-bool Character::GetVisibility(){
-    return m_Visible;
-}
-
-void Character::SetPosition(const glm::vec2& Position){
-    m_Transform.translation = Position;
 }
 
 CollisionBox& Character::GetBox(){
@@ -93,6 +29,10 @@ CollisionBox Character::GetStandingOnBlock(){
 
 void Character::SetStandingOnBlock(CollisionBox block){
     standingOn = block;
+}
+
+std::shared_ptr<AnimationObject> Character::GetAnimationObject(){
+    return ani_obj;
 }
 
 void Character::SetFacingRight(bool direction){

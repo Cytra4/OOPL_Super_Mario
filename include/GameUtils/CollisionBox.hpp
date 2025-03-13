@@ -22,6 +22,8 @@ public:
 
     //Right now my idea is that this would work with PhysicProcess() function of Character
     //the state of the CollisionBox would affect the character's velocity
+
+    //*I'm still thinking if I should 1.change the state and return T/F or 2.Simply returns the collision state (and currentState just won't exist)
     bool ifCollide(CollisionBox object);
 
     void SetState(State newState);

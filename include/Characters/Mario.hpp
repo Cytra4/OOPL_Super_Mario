@@ -2,8 +2,7 @@
 #define MARIO_HPP
 
 #include "Character.hpp"
-#include "Util/Input.hpp"
-#include "Util/Keycode.hpp"
+#include "Items/Fireball.hpp"
 
 class Mario : public Character{
 public:
@@ -35,11 +34,17 @@ public:
     //Based on mario's mode, update his animation path (i guess)
     void AnimationUpdate(std::string new_mode);
 
+    void ShootFireball();
+
+    std::vector<std::shared_ptr<Fireball>> GetFireballs();
+
 private:
     int jumpPower;
     int jumpFallGravity = 1;
     Mode mario_mode;
     bool isRunning = false;
+    bool canShootFireballs = false;
+    std::vector<std::shared_ptr<Fireball>> fireballs;
 };
 
 // Animations:

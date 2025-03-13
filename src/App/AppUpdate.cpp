@@ -16,6 +16,16 @@ void App::Update(){
             mario->SetStandingOnBlock(testFloor);
         }
     }
+    
+    //Barrier
+    auto mario_ani = mario->GetAnimationObject();
+    glm::vec2 m_pos = mario_ani->GetPosition();
+    if (m_pos.x < barrier*-1+20){
+        mario_ani->SetPosition({barrier*-1+20,m_pos.y});
+    }
+    else if (m_pos.x > barrier-20){
+        mario_ani->SetPosition({barrier-20,m_pos.y});
+    }
 
     mario->PhysicProcess(deltaTime);
 
@@ -23,9 +33,8 @@ void App::Update(){
         m_CurrentState = State::END;
     }
 
-    // LOG_DEBUG("Mario's pos:{}",mario->GetPosition());
-    // LOG_DEBUG("Mario's Box pos:{}",mario->GetBox().GetPosition());
 
+    //Mario mode testing
     if (Util::Input::IsKeyPressed(Util::Keycode::Z)){
         mario->StateUpdate(Mario::Mode::SMALL);
     }
@@ -35,6 +44,11 @@ void App::Update(){
     else if (Util::Input::IsKeyPressed(Util::Keycode::C)){
         mario->StateUpdate(Mario::Mode::FIRE);
     }
+    //LOG_DEBUG("Mario's pos:{}",mario->GetPosition());
+    //LOG_DEBUG("Cam pos:{}",CameraPosition);
 
-    m_Renderer.Update();
+    //FireballUpdate();
+    CamPosAdjust();
+
+    m_Renderer.Update(CameraPosition);
 }
