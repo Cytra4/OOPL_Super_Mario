@@ -47,7 +47,7 @@ void App::Update(){
     //LOG_DEBUG("Mario's pos:{}",mario->GetPosition());
     //LOG_DEBUG("Cam pos:{}",CameraPosition);
 
-    //FireballUpdate();
+    FireballUpdate();
     CamPosAdjust();
 
     m_Renderer.Update(CameraPosition);

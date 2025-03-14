@@ -228,22 +228,22 @@ void Mario::ShootFireball(){
         for (int i=0;i<3;i++){
             explode.emplace_back(RESOURCE_DIR"/Sprites/Mario/Fireball/fireball_explode" + std::to_string(i+1) + ".png");
         }
-        paths.push_back(roll);
-        paths.push_back(explode);
         
-        glm::vec2 fireball_pos = ani_obj->GetPosition();
+        glm::vec2 f_pos = ani_obj->GetPosition();
         if (IsFacingRight()){
-            fireball_pos.x = fireball_pos.x + 20;
+            f_pos += glm::vec2{50,0};
         }
         else{
-            fireball_pos.x = fireball_pos.x - 20;
+            f_pos -= glm::vec2{50,0};
         }
-        
-        std::shared_ptr<Fireball> ball = std::make_shared<Fireball>(100,24,24,IsFacingRight(),
-        FireballType::MARIO, fireball_pos, paths);
-        ball->SetZIndex(70);
 
-        fireballs.push_back(ball);
+        std::shared_ptr<Fireball> fireball = std::make_shared<Fireball>(FireballType::MARIO,RESOURCE_DIR"/Sprites/Mario/Fireball/fireball1.png"
+        ,20,f_pos,24.0f,24.0f);
+
+        fireball->GetAnimationObject()->AddNewAnimation(roll);
+        fireball->GetAnimationObject()->AddNewAnimation(explode);
+
+        fireballs.push_back(fireball);
     }
 }
 

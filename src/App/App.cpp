@@ -24,7 +24,7 @@ void App::FireballUpdate(){
     auto m_fireballs = mario->GetFireballs();
     for (auto fb : m_fireballs){
         fireballStore.push(fb);
-        m_Renderer.AddChild(fb);
+        m_Renderer.AddChild(fb->GetAnimationObject());
     }
 
     //1.Perform all physic process of fireballs
@@ -34,9 +34,9 @@ void App::FireballUpdate(){
     for (int i = 0; i < fireballs_size; i++) {
         auto fb = fireballStore.front();
         fireballStore.pop();
-        fb->PhysicProcess();
+        fb->Behavior();
         if (fb->OutOfRange(-CameraPosition) || fb->IsMarkedRemove()) {
-            m_Renderer.RemoveChild(fb);
+            m_Renderer.RemoveChild(fb->GetAnimationObject());
             continue;
         }
         fireballStore.push(fb);

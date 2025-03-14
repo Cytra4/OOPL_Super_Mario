@@ -3,45 +3,67 @@
 #include "Util/Animation.hpp"
 #include "Util/Logger.hpp"
 
-Fireball::Fireball(int speed, float width, float height, bool facingRight,
-    FireballType type, glm::vec2 pos, std::vector<std::vector<std::string>> paths){
-    
-    box = CollisionBox(pos,width,height);
-    position = pos;
-    animations = paths;
-    isFacingRight = facingRight;
+Fireball::Fireball(FireballType type, std::string ImagePath, int speed, glm::vec2 position, float width, float height){
+    ani_obj = std::make_shared<AnimationObject>(ImagePath, position);
+    box = CollisionBox(position, width, height);
     this->speed = speed;
     this->type = type;
-    SetAnimation(0,100);
 }
 
 FireballType Fireball::GetType(){
     return type;
 }
 
-//*To be finished, I'm trying my best to avoid this shit that gives me brain damage
+void Fireball::Behavior(){
+    PhysicProcess();
+    AnimationHandle();
+}
+
+//*TO BE DONE
 void Fireball::PhysicProcess(){
-    velocity.x = (isFacingRight) ? speed : speed * -1;
     if (type == FireballType::MARIO){
-        
-    }
+
+    } 
     else if (type == FireballType::BOWSER){
 
     }
-    else{
+    else if (type == FireballType::BLOCK){
 
     }
-    AnimationHandle();
+    else{
+        LOG_ERROR("UNEXPECTED FIREBALL TYPE?");
+    }
 }
 
 bool Fireball::OutOfRange(glm::vec2 camPos){
     bool Xoverlap = false;
     bool Yoverlap = false;
-    Xoverlap = camPos.x - 384 >= position.x ||
-               camPos.x + 384 <= position.x;
-    Yoverlap = camPos.y - 360 >= position.y ||
-               camPos.y + 360 <= position.y;
+    glm::vec2 pos = ani_obj->GetPosition();
+    Xoverlap = camPos.x - 384 >= pos.x ||
+               camPos.x + 384 <= pos.x;
+    Yoverlap = camPos.y - 360 >= pos.y ||
+               camPos.y + 360 <= pos.y;
     return Xoverlap || Yoverlap;
+}
+
+void Fireball::AnimationHandle(){
+    int new_animation = -1;
+    int cur = ani_obj->GetCurrentAnimation();
+    new_animation = (explode) ? 1 : 0;
+
+    if (new_animation != -1 && new_animation != cur){
+        ani_obj->SetAnimation(new_animation, 25);
+        ani_obj->SetLooping(true);
+        ani_obj->PlayAnimation();
+        ani_obj->SetCurrentAnimation(new_animation);
+    }
+
+    glm::vec2 scale = (IsFacingRight()) ? glm::vec2(1,1) : glm::vec2(-1,1);
+    ani_obj->SetScale(scale);
+}
+
+bool Fireball::IsFacingRight(){
+    return facingRight;
 }
 
 void Fireball::MarkRemove(){
@@ -52,37 +74,6 @@ bool Fireball::IsMarkedRemove(){
     return remove;
 }
 
-void Fireball::AnimationHandle(){
-    int newAnimation = -1;
-    newAnimation = (!exploded) ? 0 : 1;
-
-    if (newAnimation != -1 && newAnimation != currentAnimation){
-        SetAnimation(newAnimation, 100);
-        SetLooping(true);
-        PlayAnimation();
-        currentAnimation = newAnimation;
-    }
-
-    m_Transform.scale = (isFacingRight) ? glm::vec2(1,1) : glm::vec2(-1,1);
-}
-
-void Fireball::SetAnimation(int index, int interval){
-    std::vector<std::string> animation;
-    if (animations.size() < 1 || index >= int(animations.size())){
-        LOG_ERROR("ANIMATION SETTING FAILED");
-    }
-    else{
-        animation = animations[index];
-        m_Drawable = std::make_shared<Util::Animation>(animation, false, interval, false, 0);
-    }
-}
-
-void Fireball::SetLooping(bool looping){
-    auto temp = std::dynamic_pointer_cast<Util::Animation>(m_Drawable);
-    temp->SetLooping(looping);
-}
-
-void Fireball::PlayAnimation(){
-    auto temp = std::dynamic_pointer_cast<Util::Animation>(m_Drawable);
-    temp->Play();
+std::shared_ptr<AnimationObject> Fireball::GetAnimationObject(){
+    return ani_obj;
 }
