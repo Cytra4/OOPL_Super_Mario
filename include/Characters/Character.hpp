@@ -8,8 +8,7 @@
 class Character{
 private:
     CollisionBox box;
-    //This is for saving the block that the character is standing on for position handling in physic process
-    //This is CollisionBox for now, but would be changed to Block class in the future
+    //This is for saving the block that the character is standing on for position fixing in physic process
     CollisionBox standingOn;
     bool onGround = false;
     bool dead = false;
@@ -39,7 +38,7 @@ public:
     CollisionBox& GetBox();
 
     CollisionBox GetStandingOnBlock();
-    //* ↑↓ These two functions should be edited after block class is finished
+
     void SetStandingOnBlock(CollisionBox block);
 
     std::shared_ptr<AnimationObject> GetAnimationObject();
@@ -49,7 +48,7 @@ public:
     virtual void Behavior(){};
 
     //how the character's physic works (velocity, gravity...)
-    //*time=time is just gcc error hurts my eye
+    //*time=time is just that cmake warning hurts my eye
     virtual void PhysicProcess(double time){time = time;};
 
     //how the character's animation is being handled

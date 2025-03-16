@@ -11,8 +11,8 @@
 #include "GameUtils/Background.hpp"
 #include "GameUtils/CollisionBox.hpp"
 #include "GameUtils/AnimationObject.hpp"
+#include "Blocks/Brick.hpp"
 
-//*Screen scale can be changed in transform.hpp
 class App {
 public:
     enum class State {
@@ -49,6 +49,7 @@ private:
     //For testing
     CollisionBox testFloor;
     float barrier;
+    std::shared_ptr<Brick> brick;
 };
 
 //*The classes that should/might be added:

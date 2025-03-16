@@ -4,6 +4,10 @@
 #include "Util/GameObject.hpp"
 #include "pch.hpp"
 
+//Base class for characters, items, block...gameobjects that have animation
+//The position of the gameobject will also be stored here
+//So if want to change gameobject's position, a GetAnimationObject() function will be needed
+
 class AnimationObject : public Util::GameObject{
 private:
     std::string defaultSprite;

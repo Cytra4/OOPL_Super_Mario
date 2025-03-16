@@ -3,21 +3,47 @@
 #include "Util/Keycode.hpp"
 #include "Util/Logger.hpp"
 
-//maybe all the controls won't be put here, but instead only execute the behavior function
+//Not sure if I'm gonna do all the behavior stuffs here, maybe will do it in another class?
 void App::Update(){
     double deltaTime = m_Time.GetDeltaTimeMs();
     if (deltaTime > 0.02){
         deltaTime = 0.02;
     }
 
+    bool flag = false;
     mario->Behavior();
-    if (mario->GetBox().ifCollide(testFloor)){
-        if (mario->GetBox().GetCurrentState() == CollisionBox::State::COLLISION_ON_BOTTOM){
+    auto m_box = mario->GetBox();
+    //Floor collision test
+    if (m_box.ifCollide(testFloor)){
+        if (m_box.GetCurrentState() == CollisionBox::State::BOTTOM){
             mario->SetStandingOnBlock(testFloor);
+            mario->SetOnGround(true);
+            flag = true;
         }
     }
-    
-    //Barrier
+
+    //Block collision test
+    auto b_box = brick->GetBox();
+    if (m_box.ifCollide(b_box)){
+        LOG_DEBUG("SET");
+        CollisionBox::State m_state = m_box.GetCurrentState();
+        CollisionBox::State b_state = b_box.GetCurrentState();
+        b_box.ifCollide(m_box);
+        if (m_state == CollisionBox::State::TOP && b_state == CollisionBox::State::BOTTOM){
+            if (mario->GetMarioMode() != Mario::Mode::SMALL){
+                brick->ContactBehavior();
+            }
+        }
+        else if (m_state == CollisionBox::State::BOTTOM){
+            mario->SetStandingOnBlock(brick->GetBox());
+            mario->SetOnGround(true);
+            flag = true;
+        }
+    }
+    if (brick->IsMarkedDestory()){m_Renderer.RemoveChild(brick->GetAnimationObject());}
+    if (!flag){mario->SetOnGround(false);}
+
+    //Barrier Test
     auto mario_ani = mario->GetAnimationObject();
     glm::vec2 m_pos = mario_ani->GetPosition();
     if (m_pos.x < barrier*-1+20){

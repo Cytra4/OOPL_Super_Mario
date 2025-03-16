@@ -4,6 +4,8 @@
 #include "Util/GameObject.hpp"
 #include "Util/Image.hpp"
 
+//A class that is simply use to draw background
+
 class Background : public Util::GameObject{
     private:
         std::string imagePath;

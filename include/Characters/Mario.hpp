@@ -45,6 +45,8 @@ private:
     bool isRunning = false;
     bool canShootFireballs = false;
     std::vector<std::shared_ptr<Fireball>> fireballs;
+
+    bool isJumping = false;
 };
 
 // Animations:

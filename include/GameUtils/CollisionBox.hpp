@@ -4,26 +4,29 @@
 #include "pch.hpp"
 
 //Collision box for blocks, characters ... gameobjects
+
 class CollisionBox{
 public:
     enum class State {
         NONE,
-        COLLISION_ON_TOP,
-        COLLISION_ON_BOTTOM,
-        COLLISION_ON_LEFT,
-        COLLISION_ON_RIGHT
+        TOP,
+        BOTTOM,
+        LEFT,
+        RIGHT
     };
 
     CollisionBox() = default;
     CollisionBox(glm::vec2 objPos,float width, float height);
 
     //Check if itself collides with the other collision box
-    //if collides, change itself's currentState
+    //Probably the core function of this class
 
     //Right now my idea is that this would work with PhysicProcess() function of Character
     //the state of the CollisionBox would affect the character's velocity
 
-    //*I'm still thinking if I should 1.change the state and return T/F or 2.Simply returns the collision state (and currentState just won't exist)
+    //*I'm still thinking which way I should write this function:
+    // 1.change the state and return T/F
+    //2.Simply returns the collision state (currentState just won't exist or smth)
     bool ifCollide(CollisionBox object);
 
     void SetState(State newState);

@@ -26,6 +26,7 @@ void Mario::Behavior(){
         if (Util::Input::IsKeyPressed(Util::Keycode::W) && IsOnGround()){
             velocity.y = jumpPower;
             SetOnGround(false);
+            isJumping = true;
         }
     
         if (Util::Input::IsKeyPressed(Util::Keycode::A)){
@@ -61,47 +62,37 @@ void Mario::PhysicProcess(double time){
     glm::vec2 new_pos;
     new_pos.x = mario_pos.x + deltaTime*mario_velo.x;
     new_pos.y = mario_pos.y + deltaTime*mario_velo.y;
-    ani_obj->SetPosition(new_pos);
-    GetBox().SetPosition(new_pos);
 
-    if (state != CollisionBox::State::COLLISION_ON_BOTTOM){
-        SetOnGround(false);
-    }
-    else{
-        SetOnGround(true);
-    }
-    
-    if (state == CollisionBox::State::COLLISION_ON_LEFT || state == CollisionBox::State::COLLISION_ON_RIGHT){
+    if (state == CollisionBox::State::LEFT || state == CollisionBox::State::RIGHT){
         mario_velo.x = 0;
     }
-    else if (state == CollisionBox::State::COLLISION_ON_TOP || state == CollisionBox::State::COLLISION_ON_BOTTOM){
-        mario_velo.y = 0;
+    else if (state == CollisionBox::State::TOP){
+        mario_velo.y *= -1;
     }
 
-    //after jump to the highest point, mario falls down 2x gravity
+    //after jump to the highest point, mario falls down 3x gravity
     if (mario_velo.y <= 0 && !IsOnGround()){
         jumpFallGravity = 3;
     }
 
-    if (!IsOnGround()){
-        mario_velo.y = mario_velo.y + deltaTime*-500*jumpFallGravity;
-    }
-    else{
+    //Fixing mario's position when he's standing on block 
+    //(I'm still thinking if this should be written here or at CollisionManager)
+    if (IsOnGround()){
         mario_velo.y = 0;
         jumpFallGravity = 1;
+        isJumping = false;
 
-        float floorY = new_pos.y - b.GetHeight() / 2;
-        new_pos.y = floorY + b.GetHeight() / 2;
+        float floorY = b.GetHeight();
+        new_pos.y = GetBox().GetHeight()/2 + b.GetPosition().y + floorY/2; 
     }
 
+    //Gravity affecting y velocity
+    mario_velo.y = mario_velo.y + deltaTime*gravity*jumpFallGravity;
+
+    ani_obj->SetPosition(new_pos);
+    GetBox().SetPosition(new_pos);
     SetVelocity(mario_velo);
 
-    // if(new_pos.y <= -250){SetOnGround(true);}
-    // else{SetOnGround(false);}
-
-    // LOG_DEBUG("POSITION:{},{}",new_pos.x,new_pos.y);
-    // LOG_DEBUG("VELOCITY:{},{}",mario_velo.x,mario_velo.y);
-    // LOG_DEBUG(jumpFallGravity);
 }
 
 void Mario::AnimationHandle(){
@@ -109,7 +100,7 @@ void Mario::AnimationHandle(){
     if (IsDead()){
         new_animation = 2;
     }
-    else if (!IsOnGround()){
+    else if (isJumping){
         new_animation = 1;
     }
     else if (IsRunning()){

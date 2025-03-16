@@ -9,6 +9,7 @@
 
 enum class FireballType{MARIO,BOWSER,BLOCK};
 
+//Fireball class for mario's fireball, bowser's fireball and 1-4 fireball trap
 class Fireball{
 private:
     std::shared_ptr<AnimationObject> ani_obj;

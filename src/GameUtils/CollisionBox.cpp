@@ -33,16 +33,16 @@ bool CollisionBox::ifCollide(CollisionBox object){
         float minOverlap = std::min({overlapLeft, overlapRight, overlapTop, overlapBottom});
 
         if (minOverlap == overlapTop) {
-            currentState = State::COLLISION_ON_TOP;
+            currentState = State::TOP;
             //LOG_DEBUG("COLLIDE TOP");
         } else if (minOverlap == overlapBottom) {
-            currentState = State::COLLISION_ON_BOTTOM;
+            currentState = State::BOTTOM;
             //LOG_DEBUG("COLLIDE BOTTOM");
         } else if (minOverlap == overlapLeft) {
-            currentState = State::COLLISION_ON_LEFT;
+            currentState = State::LEFT;
             //LOG_DEBUG("COLLIDE LEFT");
         } else if (minOverlap == overlapRight) {
-            currentState = State::COLLISION_ON_RIGHT;
+            currentState = State::RIGHT;
             //LOG_DEBUG("COLLIDE RIGHT");
         }
 
