@@ -229,7 +229,7 @@ void Mario::ShootFireball(){
         }
 
         std::shared_ptr<Fireball> fireball = std::make_shared<Fireball>(FireballType::MARIO,RESOURCE_DIR"/Sprites/Mario/Fireball/fireball1.png"
-        ,20,f_pos,24.0f,24.0f);
+        ,200,f_pos,24.0f,24.0f);
 
         fireball->GetAnimationObject()->AddNewAnimation(roll);
         fireball->GetAnimationObject()->AddNewAnimation(explode);

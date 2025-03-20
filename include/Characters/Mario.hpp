@@ -43,10 +43,9 @@ private:
     int jumpFallGravity = 1;
     Mode mario_mode;
     bool isRunning = false;
+    bool isJumping = false;
     bool canShootFireballs = false;
     std::vector<std::shared_ptr<Fireball>> fireballs;
-
-    bool isJumping = false;
 };
 
 // Animations:

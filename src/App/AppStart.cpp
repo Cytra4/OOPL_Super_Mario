@@ -15,7 +15,7 @@ void App::Start(){
     m_Renderer.AddChild(background);
 
     //Block testing
-    glm::vec2 testing_pos = mario->GetAnimationObject()->GetPosition() + glm::vec2{50,-40};
+    glm::vec2 testing_pos = mario->GetAnimationObject()->GetPosition() + glm::vec2{50,60};
     brick = std::make_shared<Brick>(RESOURCE_DIR"/Sprites/Blocks/Brick1.png", testing_pos, 48, 48);
 
     m_Renderer.AddChild(brick->GetAnimationObject());

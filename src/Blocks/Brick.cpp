@@ -6,5 +6,6 @@ Brick::Brick(std::string defaultPath, glm::vec2 pos, float width, float height)
 }
 
 void Brick::ContactBehavior(){
+    GetBox().SetActive(false);
     MarkDestroy();
 }

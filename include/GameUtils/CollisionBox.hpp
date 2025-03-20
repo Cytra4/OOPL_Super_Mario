@@ -45,10 +45,15 @@ public:
 
     glm::vec2 GetPosition();
 
+    void SetActive(bool ac);
+
+    bool IsActive();
+
 private:
     float width;
     float height;
     glm::vec2 position;
+    bool isActive = true;
     State currentState = State::NONE;
 };
 

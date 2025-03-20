@@ -85,3 +85,11 @@ void CollisionBox::SetPosition(glm::vec2 newPos){
 glm::vec2 CollisionBox::GetPosition(){
     return position;
 }
+
+void CollisionBox::SetActive(bool ac){
+    isActive = ac;
+}
+
+bool CollisionBox::IsActive(){
+    return isActive;
+}
