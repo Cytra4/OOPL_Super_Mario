@@ -18,7 +18,10 @@ public:
 
     bool IsMarkedDestory();
     
-    virtual void ContactBehavior(){};
+    //The idea is that Block would have different ContactBehavior based on the given choice
+    //ex: A brick block, if choice = 0, the brick will jump up a bit and fall down back to original position
+    //if choice = 1, the brick will break
+    virtual void ContactBehavior(int choice){choice = choice;};
 
     CollisionBox& GetBox();
 

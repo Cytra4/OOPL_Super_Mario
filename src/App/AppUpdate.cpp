@@ -15,6 +15,7 @@ void App::Update(){
     auto m_ani = mario->GetAnimationObject();
     auto m_box = mario->GetBox();
     glm::vec2 m_pos = m_box.GetPosition();
+    
     //Floor collision test
     if (m_box.ifCollide(testFloor)){
         if (m_box.GetCurrentState() == CollisionBox::State::BOTTOM){
@@ -26,17 +27,19 @@ void App::Update(){
 
     //Block collision test
     auto b_box = brick->GetBox();
+
+    //There could be two ways:
+    //1.Check if the block is active and handle the collision
+    //2.Simply just remove the Unactive block
     if (b_box.IsActive() && m_box.ifCollide(b_box)){
         CollisionBox::State m_state = m_box.GetCurrentState();
         b_box.ifCollide(m_box);
         if (m_state == CollisionBox::State::TOP){
-            LOG_DEBUG("TOP");
             if (mario->GetMarioMode() != Mario::Mode::SMALL){
-                LOG_DEBUG("TOP2");
-                brick->ContactBehavior();
+                brick->ContactBehavior(1);
             }
             else{
-                
+                brick->ContactBehavior(0);
             }
             float new_y = (m_box.GetPosition().y - m_box.GetHeight()/2);
             m_ani->SetPosition({m_pos.x, new_y});
@@ -46,7 +49,6 @@ void App::Update(){
             
         }
         else if (m_state == CollisionBox::State::BOTTOM){
-            LOG_DEBUG("BOTTOM");
             mario->SetStandingOnBlock(brick->GetBox());
             mario->SetOnGround(true);
             flag = true;
@@ -54,17 +56,20 @@ void App::Update(){
         else if (m_state == CollisionBox::State::RIGHT || m_state == CollisionBox::State::LEFT){
             float new_x;
             if (m_state == CollisionBox::State::RIGHT){
-                LOG_DEBUG("RIGHT");
                 new_x = (b_box.GetPosition().x - b_box.GetHeight()/2) - m_box.GetHeight()/2;
             }
             else{
-                LOG_DEBUG("LEFT");
                 new_x = (b_box.GetPosition().x + b_box.GetHeight()/2) + m_box.GetHeight()/2;
             }
             m_ani->SetPosition({new_x, m_pos.y});
             m_box.SetPosition({new_x, m_pos.y});
         }
     }
+    if (brick->IsJumping()){
+        brick->PhysicProcess(deltaTime);
+    }
+    //LOG_DEBUG(b_box.GetPosition());
+
     if (brick->IsMarkedDestory()){m_Renderer.RemoveChild(brick->GetAnimationObject());}
     if (!flag){mario->SetOnGround(false);}
 
