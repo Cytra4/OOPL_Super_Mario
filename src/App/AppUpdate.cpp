@@ -41,7 +41,7 @@ void App::Update(){
             else{
                 mystery_block->ContactBehavior(0);
             }
-            float new_y = (m_box.GetPosition().y - m_box.GetHeight()/2);
+            float new_y = (b_box.GetPosition().y - b_box.GetHeight()/2) - m_box.GetHeight()/2;
             m_ani->SetPosition({m_pos.x, new_y});
             m_box.SetPosition({m_pos.x, new_y});
             auto m_velo = mario->GetVelocity();
@@ -56,10 +56,10 @@ void App::Update(){
         else if (m_state == CollisionBox::State::RIGHT || m_state == CollisionBox::State::LEFT){
             float new_x;
             if (m_state == CollisionBox::State::RIGHT){
-                new_x = (b_box.GetPosition().x - b_box.GetHeight()/2) - m_box.GetHeight()/2;
+                new_x = (b_box.GetPosition().x - b_box.GetWidth()/2) - m_box.GetWidth()/2;
             }
             else{
-                new_x = (b_box.GetPosition().x + b_box.GetHeight()/2) + m_box.GetHeight()/2;
+                new_x = (b_box.GetPosition().x + b_box.GetWidth()/2) + m_box.GetWidth()/2;
             }
             m_ani->SetPosition({new_x, m_pos.y});
             m_box.SetPosition({new_x, m_pos.y});
