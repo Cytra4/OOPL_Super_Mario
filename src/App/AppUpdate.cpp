@@ -26,7 +26,7 @@ void App::Update(){
     }
 
     //Block collision test
-    auto b_box = brick->GetBox();
+    auto b_box = mystery_block->GetBox();
 
     //There could be two ways:
     //1.Check if the block is active and handle the collision
@@ -34,12 +34,12 @@ void App::Update(){
     if (b_box.IsActive() && m_box.ifCollide(b_box)){
         CollisionBox::State m_state = m_box.GetCurrentState();
         b_box.ifCollide(m_box);
-        if (m_state == CollisionBox::State::TOP){
+        if (m_state == CollisionBox::State::TOP && mario->GetVelocity().y > 0){
             if (mario->GetMarioMode() != Mario::Mode::SMALL){
-                brick->ContactBehavior(1);
+                mystery_block->ContactBehavior(1);
             }
             else{
-                brick->ContactBehavior(0);
+                mystery_block->ContactBehavior(0);
             }
             float new_y = (m_box.GetPosition().y - m_box.GetHeight()/2);
             m_ani->SetPosition({m_pos.x, new_y});
@@ -65,10 +65,9 @@ void App::Update(){
             m_box.SetPosition({new_x, m_pos.y});
         }
     }
-    if (brick->IsJumping()){
-        brick->PhysicProcess(deltaTime);
+    if (mystery_block->IsJumping()){
+        mystery_block->PhysicProcess(deltaTime);
     }
-    //LOG_DEBUG(b_box.GetPosition());
 
     if (brick->IsMarkedDestory()){m_Renderer.RemoveChild(brick->GetAnimationObject());}
     if (!flag){mario->SetOnGround(false);}

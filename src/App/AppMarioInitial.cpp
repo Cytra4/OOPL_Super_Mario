@@ -1,7 +1,7 @@
 #include "App.hpp"
 
 void App::MarioInitial(){
-    mario = std::make_shared<Mario>(450,450,glm::vec2{-4000.0f, -140.5f},36.0f,48.0f);
+    mario = std::make_shared<Mario>(450,450,glm::vec2{-4500.0f, -140.5f},36.0f,48.0f);
     auto mario_ani = mario->GetAnimationObject();
 
     std::vector<std::string> mario_run;

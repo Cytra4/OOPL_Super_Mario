@@ -20,3 +20,19 @@ CollisionBox& Block::GetBox(){
 std::shared_ptr<AnimationObject> Block::GetAnimationObject(){
     return ani_obj;
 }
+
+void Block::SetJump(bool j){
+    isJumping = j;
+}
+
+bool Block::IsJumping(){
+    return isJumping;
+}
+
+void Block::SetReachedTop(bool s){
+    reachedTop = s;
+}
+
+bool Block::ReachedTop(){
+    return reachedTop;
+}

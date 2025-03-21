@@ -10,8 +10,14 @@
 class MysteryBlock : public Block{
 private:
     bool hasItem = true;
+    int itemCount;
 public:
-    MysteryBlock(glm::vec2 pos, float width, float height);
+    MysteryBlock(std::string defaultPath, glm::vec2 pos, float width, float height, int count);
+
+    //Missing a SpawnItem() function
+    //*TO BE DONE
+
+    virtual void PhysicProcess(double time) override;
 
     virtual void ContactBehavior(int choice) override;
 };

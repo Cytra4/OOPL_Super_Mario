@@ -10,6 +10,13 @@ private:
     CollisionBox box;
     std::shared_ptr<AnimationObject> ani_obj;
     bool destroy = false;
+    bool isJumping = false;
+    bool reachedTop = false;
+
+protected:
+    glm::vec2 init_pos;
+    glm::vec2 top_pos;
+    glm::vec2 velocity = {0.0f,150.0f};
 
 public:
     Block(std::string defaultPath, glm::vec2 pos, float width, float height);
@@ -23,9 +30,19 @@ public:
     //if choice = 1, the brick will break
     virtual void ContactBehavior(int choice){choice = choice;};
 
+    virtual void PhysicProcess(double time){time = time;}
+
     CollisionBox& GetBox();
 
     std::shared_ptr<AnimationObject> GetAnimationObject();
+
+    void SetJump(bool j);
+
+    bool IsJumping();
+
+    void SetReachedTop(bool s);
+
+    bool ReachedTop();
 };
 
 #endif

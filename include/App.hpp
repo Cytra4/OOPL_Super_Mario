@@ -12,6 +12,7 @@
 #include "GameUtils/CollisionBox.hpp"
 #include "GameUtils/AnimationObject.hpp"
 #include "Blocks/Brick.hpp"
+#include "Blocks/MysteryBlock.hpp"
 
 class App {
 public:
@@ -50,6 +51,7 @@ private:
     CollisionBox testFloor;
     float barrier;
     std::shared_ptr<Brick> brick;
+    std::shared_ptr<MysteryBlock> mystery_block;
 };
 
 //*The classes that should/might be added:
