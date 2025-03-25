@@ -23,7 +23,7 @@ public:
 
     void MarkDestroy();
 
-    bool IsMarkedDestory();
+    bool IsMarkedDestroy();
     
     //The idea is that Block would have different ContactBehavior based on the given choice
     //ex: A brick block, if choice = 0, the brick will jump up a bit and fall down back to original position

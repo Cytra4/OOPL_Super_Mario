@@ -9,10 +9,9 @@
 #include "Util/Logger.hpp"
 #include "Characters/Mario.hpp"
 #include "GameUtils/Background.hpp"
-#include "GameUtils/CollisionBox.hpp"
-#include "GameUtils/AnimationObject.hpp"
 #include "Blocks/Brick.hpp"
 #include "Blocks/MysteryBlock.hpp"
+#include "GameUtils/CollisionManager.hpp"
 
 class App {
 public:
@@ -34,6 +33,7 @@ public:
 
     void CamPosAdjust();
 
+    //This function will probably be moved to somewhere else?
     void FireballUpdate();
     
 private:
@@ -48,6 +48,7 @@ private:
     std::queue<std::shared_ptr<Fireball>> fireballStore;
 
     //For testing
+    std::shared_ptr<CollisionManager> CManager;
     CollisionBox testFloor;
     float barrier;
     std::shared_ptr<Brick> brick;
@@ -67,7 +68,5 @@ private:
 //2.Manage Mario's live
 //3.Manage the time left in game
 //4.Update the game's phases?
-//CollisionEventManager:
-//1.Deal with all the collisions
 
 #endif

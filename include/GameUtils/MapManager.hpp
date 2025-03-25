@@ -13,13 +13,15 @@
 //Based on the level, it will also read the responding text file (ex: level_1_1.txt) 
 //and create the blocks (class, position, collision box)
 
+//MapManager will probably be also be used for initialize the maps objects to pass to other classes
+//like CollisionManager and such
+
 //*TO BE DONE
 
 class MapManager{
 private:
     std::string level;
     std::vector<std::shared_ptr<Block>> blocks_store;
-    std::vector<float> barriers;
     std::shared_ptr<Background> background;
 
 public:
@@ -33,7 +35,7 @@ public:
 
     std::vector<std::shared_ptr<Block>> GetBlocks();
 
-    //Read the text file, construct background, blocks and barrier
+    //Read the text file, construct background, blocks
     void MapDataInitialize();
 
     //Delete all the blocks, background, and remove them from renderer

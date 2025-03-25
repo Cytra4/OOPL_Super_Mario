@@ -10,7 +10,6 @@ void App::Start(){
     background->DrawBackground();
 
     testFloor = CollisionBox(glm::vec2{13.5f,-280.0f},76800,33);
-    barrier = background->GetScaledSize().x/2;
 
     m_Renderer.AddChild(background);
 
@@ -22,6 +21,14 @@ void App::Start(){
 
     m_Renderer.AddChild(brick->GetAnimationObject());
     m_Renderer.AddChild(mystery_block->GetAnimationObject());
+
+    //CollisionManager test
+    std::vector<std::shared_ptr<Block>> blocks;
+    blocks.push_back(brick);
+    blocks.push_back(mystery_block);
+    std::vector<CollisionBox> floor_boxes;
+    floor_boxes.push_back(testFloor);
+    CManager = std::make_shared<CollisionManager>(mario, blocks, floor_boxes, background->GetScaledSize());
 
     CameraPosition = {0.0f,0.0f};
 

@@ -9,7 +9,7 @@ void Block::MarkDestroy(){
     destroy = true;
 }
 
-bool Block::IsMarkedDestory(){
+bool Block::IsMarkedDestroy(){
     return destroy;
 }
 

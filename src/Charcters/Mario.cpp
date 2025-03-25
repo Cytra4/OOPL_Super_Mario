@@ -25,8 +25,8 @@ void Mario::Behavior(){
     if (!IsDead()){
         if (Util::Input::IsKeyPressed(Util::Keycode::W) && IsOnGround()){
             velocity.y = jumpPower;
-            SetOnGround(false);
             isJumping = true;
+            SetOnGround(false);
         }
     
         if (Util::Input::IsKeyPressed(Util::Keycode::A)){
@@ -141,8 +141,8 @@ void Mario::StateUpdate(Mode new_mode){
     switch(new_mode){
         case Mode::SMALL:
             new_state = "Small";
-            SetHealth(1);
             canShootFireballs = false;
+            SetHealth(1);
             break;
         case Mode::BIG:
             new_state = "Big";
