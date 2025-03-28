@@ -2,8 +2,10 @@
 #define MAPMANAGER_HPP
 
 #include "GameUtils/Background.hpp"
-#include "GameUtils/CollisionBox.hpp"
+#include "GameUtils/CollisionManager.hpp"
 #include "Blocks/Brick.hpp"
+#include "Blocks/MysteryBlock.hpp"
+#include "Blocks/Slab.hpp"
 #include "Util/Renderer.hpp"
 #include "pch.hpp"
 
@@ -22,7 +24,9 @@ class MapManager{
 private:
     std::string level;
     std::vector<std::shared_ptr<Block>> blocks_store;
+    std::vector<std::shared_ptr<CollisionBox>> floor_boxes;
     std::shared_ptr<Background> background;
+    float barrier;
 
 public:
     MapManager(std::string level);
@@ -31,18 +35,22 @@ public:
 
     std::string GetCurrentLevel();
 
-    std::vector<float> GetBarriers();
+    float GetBarriers();
 
     std::vector<std::shared_ptr<Block>> GetBlocks();
+
+    std::shared_ptr<Background> GetBackground();
 
     //Read the text file, construct background, blocks
     void MapDataInitialize();
 
-    //Delete all the blocks, background, and remove them from renderer
-    void ClearMap(Util::Renderer renderer);
-
     //Add all the blocks, background to renderer
-    void DrawMap(Util::Renderer renderer);
+    void DrawMap(Util::Renderer& renderer);
+
+    //Delete all the blocks, background, and remove them from renderer
+    void ClearMap(Util::Renderer& renderer);
+
+    void DestroyMarkedObject(Util::Renderer& renderer);
 };
 
 #endif

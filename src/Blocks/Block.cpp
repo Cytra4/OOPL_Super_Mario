@@ -36,3 +36,11 @@ void Block::SetReachedTop(bool s){
 bool Block::ReachedTop(){
     return reachedTop;
 }
+
+void Block::SpawnItem(){
+    
+}
+
+bool Block::HasItem(){
+    return hasItem;
+}

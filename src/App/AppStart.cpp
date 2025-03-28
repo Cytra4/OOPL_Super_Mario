@@ -3,32 +3,24 @@
 void App::Start(){
 
     MarioInitial();
-    
-    //This part that's all about map will all be moved to MapManager after I'm finished
-    //Right now is just for testing
-    background = std::make_shared<Background>(RESOURCE_DIR"/Maps/level1_1_pureBG.png");
-    background->DrawBackground();
 
     testFloor = CollisionBox(glm::vec2{13.5f,-280.0f},76800,33);
 
-    m_Renderer.AddChild(background);
+    //m_Renderer.AddChild(background);
 
     //Block testing
     glm::vec2 testing_pos = mario->GetAnimationObject()->GetPosition() + glm::vec2{50,60};
-    brick = std::make_shared<Brick>(RESOURCE_DIR"/Sprites/Blocks/Brick1.png", testing_pos, 48, 48);
     testing_pos.x += 96;
-    mystery_block = std::make_shared<MysteryBlock>(RESOURCE_DIR"/Sprites/Blocks/empty1.png", testing_pos, 48,48, 1);
 
-    m_Renderer.AddChild(brick->GetAnimationObject());
-    m_Renderer.AddChild(mystery_block->GetAnimationObject());
+    //MapManager test
+    MManager = std::make_shared<MapManager>(level);
+    MManager->MapDataInitialize();
+    MManager->DrawMap(m_Renderer);
 
     //CollisionManager test
-    std::vector<std::shared_ptr<Block>> blocks;
-    blocks.push_back(brick);
-    blocks.push_back(mystery_block);
     std::vector<CollisionBox> floor_boxes;
     floor_boxes.push_back(testFloor);
-    CManager = std::make_shared<CollisionManager>(mario, blocks, floor_boxes, background->GetScaledSize());
+    CManager = std::make_shared<CollisionManager>(mario, MManager->GetBlocks(), floor_boxes, MManager->GetBackground()->GetScaledSize());
 
     CameraPosition = {0.0f,0.0f};
 

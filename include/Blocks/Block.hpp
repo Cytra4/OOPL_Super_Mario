@@ -9,6 +9,8 @@ class Block{
 private:
     CollisionBox box;
     std::shared_ptr<AnimationObject> ani_obj;
+    //Here's missing a shared pointer of item (that the block has)
+
     bool destroy = false;
     bool isJumping = false;
     bool reachedTop = false;
@@ -17,6 +19,8 @@ protected:
     glm::vec2 init_pos;
     glm::vec2 top_pos;
     glm::vec2 velocity = {0.0f,150.0f};
+    bool hasItem;
+    int itemCount;
 
 public:
     Block(std::string defaultPath, glm::vec2 pos, float width, float height);
@@ -43,6 +47,11 @@ public:
     void SetReachedTop(bool s);
 
     bool ReachedTop();
+
+    //*TO BE DONE
+    void SpawnItem();
+
+    bool HasItem();
 };
 
 #endif

@@ -6,6 +6,7 @@ Block(defaultPath, pos, width, height){
     top_pos = pos;
     top_pos.y += 20;
     itemCount = count;
+    hasItem = itemCount > 0;
 
     std::vector<std::string> mys_ani;
     int choice;
@@ -61,5 +62,8 @@ void MysteryBlock::ContactBehavior(int choice){
         if (!IsJumping()){
             SetJump(true);
         }
+    }
+    else{
+        SpawnItem();
     }
 }

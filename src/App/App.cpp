@@ -2,7 +2,7 @@
 
 void App::CamPosAdjust(){
     glm::vec2 mario_pos = mario->GetAnimationObject()->GetPosition();
-    glm::vec2 map_size = background->GetScaledSize();
+    glm::vec2 map_size = MManager->GetBackground()->GetScaledSize();
 
     float leftBound = map_size.x/2 * -1;
     float rightBound = map_size.x/2;

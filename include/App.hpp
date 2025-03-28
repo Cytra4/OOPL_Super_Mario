@@ -12,6 +12,7 @@
 #include "Blocks/Brick.hpp"
 #include "Blocks/MysteryBlock.hpp"
 #include "GameUtils/CollisionManager.hpp"
+#include "GameUtils/MapManager.hpp"
 
 class App {
 public:
@@ -43,22 +44,18 @@ private:
     glm::vec2 CameraPosition;
     bool m_EnterDown = false;
     std::shared_ptr<Mario> mario;
-    std::shared_ptr<Background> background;
     //Use for storing all the fireballs for update
     std::queue<std::shared_ptr<Fireball>> fireballStore;
 
     //For testing
+    std::string level = "1_1";
     std::shared_ptr<CollisionManager> CManager;
+    std::shared_ptr<MapManager> MManager; 
     CollisionBox testFloor;
     float barrier;
-    std::shared_ptr<Brick> brick;
-    std::shared_ptr<MysteryBlock> mystery_block;
 };
 
 //*The classes that should/might be added:
-//MapManager: 
-//1.Use to store all the map related stuffs: Blocks, background, barrier...
-//2.Drawing the map
 //MobManager: 
 //1.Use to store all the mob related stuffs: items(mushrooms,fireflowers,stars), enemies, fireballs(that mario throws?), mario?
 //2.Handle every mob's Behavior() and PhysicProcess()
