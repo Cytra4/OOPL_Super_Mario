@@ -6,26 +6,20 @@
 #include "Blocks/Brick.hpp"
 #include "Blocks/MysteryBlock.hpp"
 #include "Blocks/Slab.hpp"
+#include "Blocks/Pipe.hpp"
+#include "Blocks/Flag.hpp"
 #include "Util/Renderer.hpp"
 #include "pch.hpp"
-
-//This class will be use to draw map and blocks for the level
-//Right now my idea is:
-//MapManager will be given a level name(ex: 1_1), it will draw the background of 1_1
-//Based on the level, it will also read the responding text file (ex: level_1_1.txt) 
-//and create the blocks (class, position, collision box)
-
-//MapManager will probably be also be used for initialize the maps objects to pass to other classes
-//like CollisionManager and such
-
-//*TO BE DONE
 
 class MapManager{
 private:
     std::string level;
     std::vector<std::shared_ptr<Block>> blocks_store;
-    std::vector<std::shared_ptr<CollisionBox>> floor_boxes;
+    std::vector<std::shared_ptr<Pipe>> pipes_store;
+    std::vector<CollisionBox> floor_boxes;
+    std::shared_ptr<Flag> flag;
     std::shared_ptr<Background> background;
+
     float barrier;
 
 public:
@@ -39,9 +33,13 @@ public:
 
     std::vector<std::shared_ptr<Block>> GetBlocks();
 
+    std::vector<std::shared_ptr<Pipe>> GetPipes();
+
     std::shared_ptr<Background> GetBackground();
 
-    //Read the text file, construct background, blocks
+    std::vector<CollisionBox> GetFloors();
+
+    //Read the data, construct background, blocks
     void MapDataInitialize();
 
     //Add all the blocks, background to renderer

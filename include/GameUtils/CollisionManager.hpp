@@ -3,6 +3,7 @@
 
 #include "pch.hpp"
 #include "Blocks/Block.hpp"
+#include "Blocks/Pipe.hpp"
 #include "Characters/Mario.hpp"
 
 //This class will be use to handle all the collision of characters, blocks and other objects with collision box 
@@ -11,6 +12,7 @@ class CollisionManager{
 private:
     std::shared_ptr<Mario> mario;
     std::vector<std::shared_ptr<Block>> blocks;
+    std::vector<std::shared_ptr<Pipe>> pipes;
     std::vector<CollisionBox> floor_boxes;
     float map_barrier;
     bool c_flag;
@@ -21,7 +23,7 @@ private:
 
 public:
     CollisionManager(std::shared_ptr<Mario> mario, std::vector<std::shared_ptr<Block>> blocks,
-    std::vector<CollisionBox> floor_boxes, glm::vec2 mapSize);
+    std::vector<std::shared_ptr<Pipe>> pipes, std::vector<CollisionBox> floor_boxes, glm::vec2 mapSize);
 
     //The main function that CollisionManager will do in every Update()
     void UpdateProcess(double time);

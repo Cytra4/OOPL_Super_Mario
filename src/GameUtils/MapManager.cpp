@@ -2,7 +2,6 @@
 #include "GameUtils/MapDataHolder.hpp"
 #include "Util/LoadTextFile.hpp"
 #include "Util/Logger.hpp"
-#include <sstream>
 
 MapManager::MapManager(std::string level){
     this->level = level;
@@ -20,12 +19,20 @@ std::vector<std::shared_ptr<Block>> MapManager::GetBlocks(){
     return blocks_store;
 }
 
+std::vector<std::shared_ptr<Pipe>> MapManager::GetPipes(){
+    return pipes_store;
+}
+
 std::shared_ptr<Background> MapManager::GetBackground(){
     return background;
 }
 
+std::vector<CollisionBox> MapManager::GetFloors(){
+    return floor_boxes;
+}
+
 void MapManager::MapDataInitialize(){
-    std::vector<std::vector<int>> mapData = MapDataHolder::GetMapData(level); 
+    std::vector<std::vector<int>> mapData = MapDataHolder::GetBlockData(level); 
     background = std::make_shared<Background>(RESOURCE_DIR"/Maps/level" + level + ".png");
     std::string choice = std::to_string(level[2] - '0');
 
@@ -48,53 +55,22 @@ void MapManager::MapDataInitialize(){
             }
         }
     }
+
+    std::vector<std::vector<int>> floorData = MapDataHolder::GetFloorData(level);
+    for (int i=0;i<int(floorData.size());i++){
+        CollisionBox new_box = CollisionBox(glm::vec2{floorData[i][0],floorData[i][1]},floorData[i][2],floorData[i][3]);
+        floor_boxes.push_back(new_box);
+    }
+
+    std::vector<std::vector<float>> pipeData = MapDataHolder::GetPipeData(level);
+    for (int i=0;i<int(pipeData.size());i++){
+        std::shared_ptr<Pipe> new_pipe = std::make_shared<Pipe>(false, "0", pipeData[i][0], glm::vec2{pipeData[i][1],pipeData[i][2]});
+        pipes_store.push_back(new_pipe);
+    }
+
+    glm::vec2 flagData = MapDataHolder::GetFlagPosition(level);
+    flag = std::make_shared<Flag>(flagData, 48, 432);
 }
-
-//TO BE USED
-// std::string MapData = Util::LoadTextFile(levelPath);
-// std::istringstream stream(MapData);
-// std::string line;
-// while (std::getline(stream, line)) {
-//     std::istringstream lineStream(line);
-//     std::string type;
-//     double pos_x,pos_y,width,height;
-
-//     lineStream >> type >> pos_x >> pos_y;
-//     if (type == "Brick"){
-//         std::shared_ptr<Brick> new_brick 
-//         = std::make_shared<Brick>(RESOURCE_DIR"/Sprites/Blocks/Brick1.png", glm::vec2{pos_x, pos_y}, 48, 48);
-//         blocks_store.push_back(new_brick);
-//     }
-//     else if (type == "C_Brick"){
-
-//     }
-//     else if (type == "C_Mystery"){
-//         std::shared_ptr<MysteryBlock> new_mystery 
-//         = std::make_shared<MysteryBlock>(RESOURCE_DIR"/Sprites/Blocks/empty1.png", glm::vec2{pos_x, pos_y}, 48,48, 1);
-//         blocks_store.push_back(new_mystery);
-//     }
-//     else if (type == "M_Mystery"){
-
-//     }
-//     else if (type == "F_Mystery"){
-
-//     }
-//     else if (type == "Slab"){
-
-//     }
-//     else if (type == "Pipe"){
-
-//     }
-//     else if (type == "H_Pipe"){
-
-//     }
-//     else{
-//         lineStream >> width >> height;
-//         std::shared_ptr<CollisionBox> new_floor
-//         =std::make_shared<CollisionBox>(glm::vec2{pos_x, pos_y}, width, height);
-//         floor_boxes.push_back(new_floor);
-//     }
-// }
 
 void MapManager::DrawMap(Util::Renderer& renderer){
     background->DrawBackground();
@@ -104,6 +80,12 @@ void MapManager::DrawMap(Util::Renderer& renderer){
         renderer.AddChild(blocks_store[i]->GetAnimationObject());
     }
 
+    for (int i=0;i<int(pipes_store.size());i++){
+        renderer.AddChild(pipes_store[i]->GetAnimationObject());
+    }
+
+    renderer.AddChild(flag->GetAnimationObject());
+    renderer.AddChild(flag->GetFlagAniObj());
 }
 
 void MapManager::ClearMap(Util::Renderer& renderer){

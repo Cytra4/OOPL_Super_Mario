@@ -18,7 +18,7 @@ void App::Update(){
     CManager->UpdateProcess(deltaTime);
     mario->PhysicProcess(deltaTime);
     MManager->DestroyMarkedObject(m_Renderer);
-
+    //LOG_DEBUG(mario->GetAnimationObject()->GetPosition());
     //Fireball Shoot test
     FireballUpdate();
 

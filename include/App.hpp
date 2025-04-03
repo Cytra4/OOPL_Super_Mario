@@ -9,10 +9,9 @@
 #include "Util/Logger.hpp"
 #include "Characters/Mario.hpp"
 #include "GameUtils/Background.hpp"
-#include "Blocks/Brick.hpp"
-#include "Blocks/MysteryBlock.hpp"
 #include "GameUtils/CollisionManager.hpp"
 #include "GameUtils/MapManager.hpp"
+#include "GameUtils/MapDataHolder.hpp"
 
 class App {
 public:
@@ -44,15 +43,15 @@ private:
     glm::vec2 CameraPosition;
     bool m_EnterDown = false;
     std::shared_ptr<Mario> mario;
+
     //Use for storing all the fireballs for update
+    //Will to moved to other places? (Or not)
     std::queue<std::shared_ptr<Fireball>> fireballStore;
 
     //For testing
     std::string level = "1_1";
     std::shared_ptr<CollisionManager> CManager;
     std::shared_ptr<MapManager> MManager; 
-    CollisionBox testFloor;
-    float barrier;
 };
 
 //*The classes that should/might be added:

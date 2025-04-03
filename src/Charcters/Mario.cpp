@@ -79,7 +79,7 @@ void Mario::PhysicProcess(double time){
     //(I'm still thinking if this should be written here or at CollisionManager)
     if (IsOnGround()){
         mario_velo.y = 0;
-        jumpFallGravity = 1;
+        jumpFallGravity = 3;
         isJumping = false;
 
         float floorY = b.GetHeight();
