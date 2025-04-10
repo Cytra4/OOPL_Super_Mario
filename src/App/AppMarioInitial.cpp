@@ -1,7 +1,7 @@
 #include "App.hpp"
 
 void App::MarioInitial(){
-    mario = std::make_shared<Mario>(800,450,MapDataHolder::GetMarioPosition(level),36.0f,48.0f);
+    mario = std::make_shared<Mario>(770,450,MapDataHolder::GetMarioPosition(level),36.0f,48.0f);
     auto mario_ani = mario->GetAnimationObject();
 
     std::vector<std::string> mario_run;

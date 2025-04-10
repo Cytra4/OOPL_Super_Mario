@@ -4,6 +4,7 @@
 #include "pch.hpp"
 #include "Blocks/Block.hpp"
 #include "Blocks/Pipe.hpp"
+#include "Items/Item.hpp"
 #include "Characters/Mario.hpp"
 
 //This class will be use to handle all the collision of characters, blocks and other objects with collision box 
@@ -13,9 +14,11 @@ private:
     std::shared_ptr<Mario> mario;
     std::vector<std::shared_ptr<Block>> blocks;
     std::vector<std::shared_ptr<Pipe>> pipes;
+    std::vector<std::shared_ptr<Item>> items;
     std::vector<CollisionBox> floor_boxes;
     float map_barrier;
     bool c_flag;
+    bool i_flag;
 
     //Missing objects:
     //1.Vector storing all the enemies
@@ -29,11 +32,15 @@ public:
     void UpdateProcess(double time);
     
     //Check the collision of character and blocks
-    void BlockCollisionProcess(std::shared_ptr<Character> character, double time);
+    void BlockCollisionProcess(std::shared_ptr<Character> character, double time, int mode);
+
+    void BlockCollisionProcess(std::shared_ptr<Item> item);
 
     //Check the collision of character and floor_boxes/barrier
     void OtherCollisionProcess(std::shared_ptr<Character> character);
     
+    void OtherCollisionProcess(std::shared_ptr<Item> item);
+
     //Check the collision of Mario and Enemies
     void EnemyCollisionProcess();
 
@@ -42,13 +49,15 @@ public:
     //Check the collision of Mario and items
     void ItemCollisionProcess();
     
-    //Remove blocks that are marked destroy to reduce process time
+    //Remove stuff that are marked destroy to reduce process time
     void RemoveMarkedObject();
 
     //Remove enemies that are dead to reduce process time
     //*I'm still thinking if this function is necessary 
     //Since I guess this can also be handled in RemoveMarkedObject()
     void RemoveDeadEnemy();
+
+    void AddItem(std::shared_ptr<Item> item);
 };
 
 #endif

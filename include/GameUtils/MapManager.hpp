@@ -8,6 +8,7 @@
 #include "Blocks/Slab.hpp"
 #include "Blocks/Pipe.hpp"
 #include "Blocks/Flag.hpp"
+#include "Items/Item.hpp"
 #include "Util/Renderer.hpp"
 #include "pch.hpp"
 
@@ -16,6 +17,7 @@ private:
     std::string level;
     std::vector<std::shared_ptr<Block>> blocks_store;
     std::vector<std::shared_ptr<Pipe>> pipes_store;
+    std::vector<std::shared_ptr<Item>> items_store;
     std::vector<CollisionBox> floor_boxes;
     std::shared_ptr<Flag> flag;
     std::shared_ptr<Background> background;
@@ -48,7 +50,13 @@ public:
     //Delete all the blocks, background, and remove them from renderer
     void ClearMap(Util::Renderer& renderer);
 
+    //Right now is checking if MysteryBlock has spawned item
+    void UpdateMap(Util::Renderer& renderer, std::shared_ptr<CollisionManager> CManager);
+
     void DestroyMarkedObject(Util::Renderer& renderer);
+
+    //When item goes out of range, mark destroy it
+    void OutOfRangeMarkDestroy(glm::vec2 cam_pos);
 };
 
 #endif

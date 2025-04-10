@@ -92,9 +92,26 @@ void MapManager::ClearMap(Util::Renderer& renderer){
     for (int i=0;i<int(blocks_store.size());i++){
         renderer.RemoveChild(blocks_store[i]->GetAnimationObject());
     }
+    for (int i=0;i<int(pipes_store.size());i++){
+        renderer.RemoveChild(pipes_store[i]->GetAnimationObject());
+    }
     renderer.RemoveChild(background);
+    renderer.RemoveChild(flag->GetAnimationObject());
+    renderer.RemoveChild(flag->GetFlagAniObj());
     blocks_store.clear();
+    pipes_store.clear();
     floor_boxes.clear();
+}
+
+void MapManager::UpdateMap(Util::Renderer& renderer, std::shared_ptr<CollisionManager> CManager){
+    for (int i=0;i<int(blocks_store.size());i++){
+        if (blocks_store[i]->HasItem()){
+            renderer.AddChild(blocks_store[i]->GetItem()->GetAnimationObject());
+            CManager->AddItem(blocks_store[i]->GetItem());
+            items_store.push_back(blocks_store[i]->GetItem());
+            blocks_store[i]->SetHasItem(false);
+        }
+    }
 }
 
 void MapManager::DestroyMarkedObject(Util::Renderer& renderer){
@@ -108,4 +125,30 @@ void MapManager::DestroyMarkedObject(Util::Renderer& renderer){
             return block->IsMarkedDestroy(); 
         }),
         blocks_store.end());
+
+    for (int i=0;i<int(items_store.size());i++){
+        if (items_store[i]->IsMarkedDestroy()){
+            renderer.RemoveChild(items_store[i]->GetAnimationObject());
+        }
+    }
+    items_store.erase(std::remove_if(items_store.begin(), items_store.end(),
+        [](const std::shared_ptr<Item>& item) {
+            return item->IsMarkedDestroy(); 
+        }),
+        items_store.end());
+}
+
+void MapManager::OutOfRangeMarkDestroy(glm::vec2 cam_pos){
+    for (int i=0;i<int(items_store.size());i++){
+        bool Xoverlap = false;
+        bool Yoverlap = false;
+        glm::vec2 pos = items_store[i]->GetAnimationObject()->GetPosition();
+        Xoverlap = cam_pos.x - 400 >= pos.x ||
+                cam_pos.x + 400 <= pos.x;
+        Yoverlap = cam_pos.y - 360 >= pos.y ||
+                cam_pos.y + 360 <= pos.y;
+        if (Xoverlap || Yoverlap){
+            items_store[i]->MarkDestroy();
+        }
+    }
 }

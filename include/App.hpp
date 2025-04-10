@@ -64,5 +64,9 @@ private:
 //2.Manage Mario's live
 //3.Manage the time left in game
 //4.Update the game's phases?
+//AnimationManager:
+//1.Check all the items,blocks,enemies, if they are out of camera, then pause their animation
+//^ This probably is not necessary, depends on if the game is too laggy cause of all the AnimationObject's animation
+//(Cause right now the mystery blocks are already making the game a bit laggy)
 
 #endif

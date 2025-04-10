@@ -1,4 +1,5 @@
 #include "Blocks/MysteryBlock.hpp"
+#include "Util/Logger.hpp"
 
 MysteryBlock::MysteryBlock(std::string defaultPath, glm::vec2 pos, float width, float height, int count) : 
 Block(defaultPath, pos, width, height){
@@ -6,7 +7,6 @@ Block(defaultPath, pos, width, height){
     top_pos = pos;
     top_pos.y += 20;
     itemCount = count;
-    hasItem = itemCount > 0;
 
     std::vector<std::string> mys_ani;
     int choice;
@@ -22,6 +22,26 @@ Block(defaultPath, pos, width, height){
     GetAnimationObject()->SetLooping(true);
     GetAnimationObject()->PlayAnimation();
     GetAnimationObject()->SetCurrentAnimation(0);
+}
+
+void MysteryBlock::SpawnItem(){
+    glm::vec2 spawn_pos = GetAnimationObject()->GetPosition();
+    spawn_pos.y += 15.0f;
+    hasItem = true;
+    if (itemType == "Mushroom"){
+        int direction = int(rand() % 2);
+        item = std::make_shared<Mushroom>(direction, 1, RESOURCE_DIR"/Sprites/Items/mushroom.png"
+        , spawn_pos, 48.0f, 48.0f);
+        item->GetAnimationObject()->SetZIndex(GetAnimationObject()->GetZIndex() - 1);
+        item->SetStandingOnBlock(GetBox());
+        item->SetOnGround(true);
+    }
+    else if (itemType == "Flower"){
+
+    }
+    else if (itemType == "Coin"){
+
+    }
 }
 
 void MysteryBlock::PhysicProcess(double time){
@@ -54,16 +74,15 @@ void MysteryBlock::PhysicProcess(double time){
 
 void MysteryBlock::ContactBehavior(int choice){
     choice=choice;
-    itemCount -= 1;
-    //There should be a SpawnItem() function when Item class is done
+    if (itemCount > 0){
+        SpawnItem();
+        itemCount -= 1;
+    }
     if (itemCount == 0){
         GetAnimationObject()->SetDefaultSprite(GetAnimationObject()->GetDefaultSprite());
         GetAnimationObject()->SetCurrentAnimation(-1);
         if (!IsJumping()){
             SetJump(true);
         }
-    }
-    else{
-        SpawnItem();
     }
 }

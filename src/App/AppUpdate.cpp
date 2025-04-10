@@ -17,8 +17,12 @@ void App::Update(){
     mario->Behavior();
     CManager->UpdateProcess(deltaTime);
     mario->PhysicProcess(deltaTime);
+    MManager->OutOfRangeMarkDestroy(-CameraPosition);
     MManager->DestroyMarkedObject(m_Renderer);
+    MManager->UpdateMap(m_Renderer, CManager);
+
     //LOG_DEBUG(mario->GetAnimationObject()->GetPosition());
+    
     //Fireball Shoot test
     FireballUpdate();
 
@@ -31,6 +35,12 @@ void App::Update(){
     }
     else if (Util::Input::IsKeyPressed(Util::Keycode::C)){
         mario->StateUpdate(Mario::Mode::FIRE);
+    }
+
+    if (Util::Input::IsKeyPressed(Util::Keycode::F)){
+        auto pos = mario->GetAnimationObject()->GetPosition();
+        mario->GetAnimationObject()->SetPosition({pos.x,360.0f});
+        mario->GetBox().SetPosition({pos.x,360.0f});
     }
 
 

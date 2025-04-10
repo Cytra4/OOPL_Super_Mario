@@ -72,11 +72,10 @@ void Mario::PhysicProcess(double time){
 
     //after jump to the highest point, mario falls down 3x gravity
     if (mario_velo.y <= 0 && !IsOnGround()){
-        jumpFallGravity = 3;
+        jumpFallGravity = 2.5;
     }
 
     //Fixing mario's position when he's standing on block 
-    //(I'm still thinking if this should be written here or at CollisionManager)
     if (IsOnGround()){
         mario_velo.y = 0;
         jumpFallGravity = 3;
@@ -138,11 +137,13 @@ void Mario::Hurt(){
 
 void Mario::StateUpdate(Mode new_mode){
     std::string new_state;
+    glm::vec2 new_pos = GetAnimationObject()->GetPosition();
     switch(new_mode){
         case Mode::SMALL:
             new_state = "Small";
             canShootFireballs = false;
             SetHealth(1);
+            new_pos.y -= 24.0f;
             break;
         case Mode::BIG:
             new_state = "Big";
@@ -164,19 +165,44 @@ void Mario::StateUpdate(Mode new_mode){
 
 void Mario::AnimationUpdate(std::string new_mode){
     std::string old_state;
-    switch(mario_mode){
+    glm::vec2 new_pos = GetAnimationObject()->GetPosition();
+    Mode new_state;
+    if (new_mode == "Small"){
+        new_state = Mode::SMALL;
+    }
+    else if (new_mode == "Big"){
+        new_state = Mode::BIG;
+    }
+    else if (new_mode == "Fire"){
+        new_state = Mode::FIRE;
+    }
+
+    if (mario_mode == Mode::SMALL){
+        old_state = "Small";
+    }
+    else if (mario_mode == Mode::BIG){
+        old_state = "Big";
+    }
+    else if (mario_mode == Mode::FIRE){
+        old_state = "Fire";
+    }
+
+    switch(new_state){
         case Mode::SMALL:
-            old_state = "Small";
             GetBox().SetWidth(36.0f);
             GetBox().SetHeight(48.0f);
             break;
         case Mode::BIG:
-            old_state = "Big";
+            if (mario_mode == Mario::Mode::SMALL){
+                new_pos.y += 24.0f;
+            }
             GetBox().SetWidth(48.0f);
             GetBox().SetHeight(96.0f);
             break;
         case Mode::FIRE:
-            old_state = "Fire";
+            if (mario_mode == Mario::Mode::SMALL){
+                new_pos.y += 24.0f;
+            }
             GetBox().SetWidth(48.0f);
             GetBox().SetHeight(96.0f);
             break;
@@ -184,8 +210,8 @@ void Mario::AnimationUpdate(std::string new_mode){
             LOG_ERROR("Unexpected Mario Mode?");
             return;
     }
-
-    //* ↑ The new collision box will just be set to the size of image for now
+    GetAnimationObject()->SetPosition(new_pos);
+    GetBox().SetPosition(new_pos);
 
     std::string dftSprite = ani_obj->GetDefaultSprite();
     std::vector<std::vector<std::string>>& animations = ani_obj->GetAnimationPaths();

@@ -13,6 +13,18 @@ bool Block::IsMarkedDestroy(){
     return destroy;
 }
 
+void Block::SetHasItem(bool choice){
+    hasItem = choice;
+}
+
+bool Block::HasItem(){
+    return hasItem;
+}
+
+std::shared_ptr<Item> Block::GetItem(){
+    return item;
+}
+
 CollisionBox& Block::GetBox(){
     return box;
 }
@@ -35,12 +47,4 @@ void Block::SetReachedTop(bool s){
 
 bool Block::ReachedTop(){
     return reachedTop;
-}
-
-void Block::SpawnItem(){
-    
-}
-
-bool Block::HasItem(){
-    return hasItem;
 }

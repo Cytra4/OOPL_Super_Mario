@@ -52,4 +52,5 @@ private:
 // 0: Mario run
 // 1: Mario jump
 // 2: Mario dead
+// 3: Mario climb
 #endif

@@ -3,14 +3,13 @@
 
 #include "GameUtils/CollisionBox.hpp"
 #include "GameUtils/AnimationObject.hpp"
+#include "Items/Item.hpp"
 
 //Base class for all the blocks
 class Block{
 private:
     CollisionBox box;
     std::shared_ptr<AnimationObject> ani_obj;
-    //Here's missing a shared pointer of item (that the block has)
-
     bool destroy = false;
     bool isJumping = false;
     bool reachedTop = false;
@@ -19,8 +18,8 @@ protected:
     glm::vec2 init_pos;
     glm::vec2 top_pos;
     glm::vec2 velocity = {0.0f,150.0f};
-    bool hasItem;
-    int itemCount;
+    bool hasItem = false;
+    std::shared_ptr<Item> item;
 
 public:
     Block(std::string defaultPath, glm::vec2 pos, float width, float height);
@@ -36,6 +35,15 @@ public:
 
     virtual void PhysicProcess(double time){time = time;}
 
+    virtual void SpawnItem(){};
+
+    void SetHasItem(bool choice);
+    
+    //Will be use to check if the item is spawned, if item spawned, throw the item to MapManager and CollisionManager
+    bool HasItem();
+    
+    std::shared_ptr<Item> GetItem();
+
     CollisionBox& GetBox();
 
     std::shared_ptr<AnimationObject> GetAnimationObject();
@@ -47,11 +55,6 @@ public:
     void SetReachedTop(bool s);
 
     bool ReachedTop();
-
-    //*TO BE DONE
-    void SpawnItem();
-
-    bool HasItem();
 };
 
 #endif
