@@ -13,7 +13,7 @@ public:
 
     virtual void PhysicProcess(double time) override;
 
-    virtual void ContactBehavior(int choice) override;
+    virtual void ContactBehavior(int choice, std::shared_ptr<Mario> mario) override;
 };
 
 #endif

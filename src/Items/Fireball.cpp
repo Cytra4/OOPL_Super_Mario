@@ -7,6 +7,7 @@ Fireball::Fireball(FireballType type, std::string ImagePath, int speed, glm::vec
     ani_obj = std::make_shared<AnimationObject>(ImagePath, position);
     box = CollisionBox(position, width, height);
     this->speed = speed;
+    velocity.x = speed;
     this->type = type;
 }
 
@@ -14,24 +15,36 @@ FireballType Fireball::GetType(){
     return type;
 }
 
-void Fireball::Behavior(){
-    PhysicProcess();
+void Fireball::Behavior(double time){
+    PhysicProcess(time);
     AnimationHandle();
 }
 
 //*TO BE DONE
-void Fireball::PhysicProcess(){
-    if (type == FireballType::MARIO){
+void Fireball::PhysicProcess(double time){
+    glm::vec2 f_pos = ani_obj->GetPosition();
+    glm::vec2 f_velo = velocity;
+    double deltaTime = time;
 
-    } 
-    else if (type == FireballType::BOWSER){
-
-    }
-    else if (type == FireballType::BLOCK){
-
-    }
-    else{
-        LOG_ERROR("UNEXPECTED FIREBALL TYPE?");
+    if (!explode){
+        if (type == FireballType::MARIO){
+            glm::vec2 new_pos;
+            new_pos.x = f_pos.x + deltaTime*velocity.x;
+            new_pos.y = f_pos.y + deltaTime*velocity.y;
+            f_velo.y = f_velo.y + deltaTime*gravity*4;
+            ani_obj->SetPosition(new_pos);
+            GetBox().SetPosition(new_pos);
+            SetVelocity(f_velo);
+        } 
+        else if (type == FireballType::BOWSER){
+    
+        }
+        else if (type == FireballType::BLOCK){
+    
+        }
+        else{
+            LOG_ERROR("UNEXPECTED FIREBALL TYPE?");
+        }
     }
 }
 
@@ -50,6 +63,10 @@ void Fireball::AnimationHandle(){
     int new_animation = -1;
     int cur = ani_obj->GetCurrentAnimation();
     new_animation = (explode) ? 1 : 0;
+
+    if (cur == 1 && ani_obj->IfAnimationEnds()){
+        MarkRemove();
+    }
 
     if (new_animation != -1 && new_animation != cur){
         ani_obj->SetAnimation(new_animation, 25);
@@ -76,4 +93,24 @@ bool Fireball::IsMarkedRemove(){
 
 std::shared_ptr<AnimationObject> Fireball::GetAnimationObject(){
     return ani_obj;
+}
+
+CollisionBox& Fireball::GetBox(){
+    return box;
+}
+
+void Fireball::SetVelocity(glm::vec2 new_velo){
+    velocity = new_velo;
+}
+
+glm::vec2 Fireball::GetVelocity(){
+    return velocity;
+}
+
+int Fireball::GetJumppower(){
+    return jumpPower;
+}
+
+void Fireball::SetExplode(){
+    explode = true;
 }

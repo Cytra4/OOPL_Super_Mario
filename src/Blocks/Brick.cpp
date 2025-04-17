@@ -40,7 +40,7 @@ void Brick::PhysicProcess(double time){
     GetBox().SetPosition(new_pos);
 }
 
-void Brick::ContactBehavior(int choice){
+void Brick::ContactBehavior(int choice, std::shared_ptr<Mario> mario){
     if (choice == 0){
         if (!IsJumping()){
             SetJump(true);

@@ -15,16 +15,17 @@ void App::Update(){
     //CManager's UpdateProcess() *HAS* to be executed before PhysicProcess() of character
     //(Not sure if it's the same for other character, but for Mario it has to be this way)
     mario->Behavior();
-    CManager->UpdateProcess(deltaTime);
+    CManager->UpdateProcess(deltaTime, -CameraPosition);
     mario->PhysicProcess(deltaTime);
     MManager->OutOfRangeMarkDestroy(-CameraPosition);
     MManager->DestroyMarkedObject(m_Renderer);
-    MManager->UpdateMap(m_Renderer, CManager);
+    MManager->UpdateMap(m_Renderer, CManager, mario);
 
     //LOG_DEBUG(mario->GetAnimationObject()->GetPosition());
-    
-    //Fireball Shoot test
-    FireballUpdate();
+
+    if (Util::Input::IsKeyPressed(Util::Keycode::J)){
+        mario->ShootFireball();
+    }
 
     //Mario mode testing
     if (Util::Input::IsKeyPressed(Util::Keycode::Z)){

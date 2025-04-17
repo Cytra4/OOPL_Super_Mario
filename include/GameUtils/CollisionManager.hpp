@@ -16,6 +16,7 @@ private:
     std::vector<std::shared_ptr<Pipe>> pipes;
     std::vector<std::shared_ptr<Item>> items;
     std::vector<CollisionBox> floor_boxes;
+    std::queue<std::shared_ptr<Fireball>> m_fireballs;
     float map_barrier;
     bool c_flag;
     bool i_flag;
@@ -29,17 +30,21 @@ public:
     std::vector<std::shared_ptr<Pipe>> pipes, std::vector<CollisionBox> floor_boxes, glm::vec2 mapSize);
 
     //The main function that CollisionManager will do in every Update()
-    void UpdateProcess(double time);
+    void UpdateProcess(double time, glm::vec2 CameraPosition);
     
     //Check the collision of character and blocks
     void BlockCollisionProcess(std::shared_ptr<Character> character, double time, int mode);
 
     void BlockCollisionProcess(std::shared_ptr<Item> item);
 
+    void BlockCollisionProcess(std::shared_ptr<Fireball> fb);
+
     //Check the collision of character and floor_boxes/barrier
     void OtherCollisionProcess(std::shared_ptr<Character> character);
     
     void OtherCollisionProcess(std::shared_ptr<Item> item);
+
+    void OtherCollisionProcess(std::shared_ptr<Fireball> fb);
 
     //Check the collision of Mario and Enemies
     void EnemyCollisionProcess();
@@ -58,6 +63,8 @@ public:
     void RemoveDeadEnemy();
 
     void AddItem(std::shared_ptr<Item> item);
+
+    void SetFireballs(std::queue<std::shared_ptr<Fireball>> fireballs);
 };
 
 #endif

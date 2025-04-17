@@ -29,7 +29,7 @@ void Mushroom::PhysicProcess(double time){
             float floorY = b.GetHeight();
             new_pos.y = GetBox().GetHeight()/2 + b.GetPosition().y + floorY/2;
         }
-        mush_velo.y = mush_velo.y + deltaTime*gravity;
+        mush_velo.y = mush_velo.y + deltaTime*gravity*1.5;
         SetVelocity(mush_velo);
     }
     else{

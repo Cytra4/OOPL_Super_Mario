@@ -26,6 +26,7 @@ void Mario::Behavior(){
         if (Util::Input::IsKeyPressed(Util::Keycode::W) && IsOnGround()){
             velocity.y = jumpPower;
             isJumping = true;
+            isJumpKeyHeld = true;
             SetOnGround(false);
         }
     
@@ -55,7 +56,6 @@ void Mario::Behavior(){
 void Mario::PhysicProcess(double time){
     glm::vec2 mario_pos = ani_obj->GetPosition();
     glm::vec2 mario_velo = GetVelocity();
-    CollisionBox::State state = GetBox().GetCurrentState();
     CollisionBox b = GetStandingOnBlock();
     double deltaTime = time;
 
@@ -63,15 +63,26 @@ void Mario::PhysicProcess(double time){
     new_pos.x = mario_pos.x + deltaTime*mario_velo.x;
     new_pos.y = mario_pos.y + deltaTime*mario_velo.y;
 
-    if (state == CollisionBox::State::LEFT || state == CollisionBox::State::RIGHT){
-        mario_velo.x = 0;
-    }
-    else if (state == CollisionBox::State::TOP){
-        mario_velo.y *= -1;
+    if (mario_mode == Mode::FIRE && canShootFireballs == false){
+        fireball_CD_timer += time;
+        if (fireball_CD_timer > 0.5f){
+            canShootFireballs = true;
+            fireball_CD_timer = 0;
+        }
     }
 
+    //Detect if jump key is released while jumping
+    if (Util::Input::IsKeyUp(Util::Keycode::W) && isJumping){
+        isJumpKeyHeld = false;
+    }
+
+    //If jump key is released and mario is still jumping up,
+    //makes his fall gravity very high to make big and small
+    if (!isJumpKeyHeld && mario_velo.y > 0) {
+        jumpFallGravity = 10.0f;
+    }
     //after jump to the highest point, mario falls down 3x gravity
-    if (mario_velo.y <= 0 && !IsOnGround()){
+    else if (mario_velo.y <= 0 && !IsOnGround()){
         jumpFallGravity = 2.5;
     }
 
@@ -230,10 +241,17 @@ void Mario::AnimationUpdate(std::string new_mode){
             }
         }
     }
+
+    if (ani_obj->GetCurrentAnimation() != -1){
+        ani_obj->SetAnimation(ani_obj->GetCurrentAnimation(), 25);
+        ani_obj->SetLooping(true);
+        ani_obj->PlayAnimation();
+    }
 }
 
 void Mario::ShootFireball(){
     if (canShootFireballs){
+        canShootFireballs = false;
         std::vector<std::vector<std::string>> paths;
         std::vector<std::string> roll;
         roll.reserve(4);
@@ -254,8 +272,8 @@ void Mario::ShootFireball(){
             f_pos -= glm::vec2{50,0};
         }
 
-        std::shared_ptr<Fireball> fireball = std::make_shared<Fireball>(FireballType::MARIO,RESOURCE_DIR"/Sprites/Mario/Fireball/fireball1.png"
-        ,200,f_pos,24.0f,24.0f);
+        std::shared_ptr<Fireball> fireball = std::make_shared<Fireball>(FireballType::MARIO, 
+        RESOURCE_DIR"/Sprites/Mario/Fireball/fireball1.png",500 * ani_obj->GetTransform().scale.x ,f_pos,24.0f,24.0f);
 
         fireball->GetAnimationObject()->AddNewAnimation(roll);
         fireball->GetAnimationObject()->AddNewAnimation(explode);
@@ -268,4 +286,12 @@ std::vector<std::shared_ptr<Fireball>> Mario::GetFireballs(){
     auto obj = fireballs;
     fireballs.clear();
     return obj;
+}
+
+void Mario::DestroyMarkedFireball(){
+    fireballs.erase(std::remove_if(fireballs.begin(), fireballs.end(),
+        [](const std::shared_ptr<Fireball>& fireball) {
+            return fireball->IsMarkedRemove(); 
+        }),
+        fireballs.end());
 }

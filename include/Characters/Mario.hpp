@@ -36,6 +36,8 @@ public:
 
     void ShootFireball();
 
+    void DestroyMarkedFireball();
+
     std::vector<std::shared_ptr<Fireball>> GetFireballs();
 
 private:
@@ -44,7 +46,9 @@ private:
     Mode mario_mode;
     bool isRunning = false;
     bool isJumping = false;
+    bool isJumpKeyHeld = false;
     bool canShootFireballs = false;
+    double fireball_CD_timer = 0;
     std::vector<std::shared_ptr<Fireball>> fireballs;
 };
 

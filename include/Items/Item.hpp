@@ -17,7 +17,7 @@ private:
     //Where the item will go, direction = 0 -> Go left, =1 -> Go right
     int direction;
     //*This is for future use
-    int score;
+    int score = 1000;
 
 protected:
     bool reachedTop = false;

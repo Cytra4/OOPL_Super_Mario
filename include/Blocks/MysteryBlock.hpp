@@ -3,7 +3,8 @@
 
 #include "Blocks/Block.hpp"
 #include "Items/Mushroom.hpp"
-
+#include "Items/Coin.hpp"
+#include "Items/FireFlower.hpp"
 
 //Class for MysteryBlock, there would be two kinds of MysteryBlock:
 //1.One with items like mushroom, fireflower and such
@@ -11,16 +12,17 @@
 
 class MysteryBlock : public Block{
 private:
-    std::string itemType = "Mushroom";
+    std::string itemType;
     int itemCount;
+    bool empty = false;
 public:
-    MysteryBlock(std::string defaultPath, glm::vec2 pos, float width, float height, int count);
+    MysteryBlock(std::string itemType, std::string defaultPath, glm::vec2 pos, float width, float height, int count);
 
-    virtual void SpawnItem() override;
+    virtual void SpawnItem(std::shared_ptr<Mario> mario) override;
 
     virtual void PhysicProcess(double time) override;
 
-    virtual void ContactBehavior(int choice) override;
+    virtual void ContactBehavior(int choice, std::shared_ptr<Mario> mario) override;
 };
 
 #endif

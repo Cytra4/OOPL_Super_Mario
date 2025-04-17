@@ -9,7 +9,7 @@ private:
 public:
     Slab(std::string defaultPath, glm::vec2 pos, float width, float height);
     
-    virtual void ContactBehavior(int choice) override;
+    virtual void ContactBehavior(int choice, std::shared_ptr<Mario> mario) override;
 };
 
 #endif

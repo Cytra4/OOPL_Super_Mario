@@ -10,7 +10,7 @@ std::vector<std::shared_ptr<Pipe>> pipes, std::vector<CollisionBox> floor_boxes,
     map_barrier = mapSize.x/2;
 }
 
-void CollisionManager::UpdateProcess(double time){
+void CollisionManager::UpdateProcess(double time, glm::vec2 CameraPosition){
     c_flag = false;
     BlockCollisionProcess(mario, time, 0);
     OtherCollisionProcess(mario);
@@ -18,8 +18,7 @@ void CollisionManager::UpdateProcess(double time){
     EnemyCollisionProcess();
     ItemCollisionProcess();
 
-    //Here should be 2 loops
-    //1.Loops of enemies doing BlockCollisionProcess() and OtherCollisionProcess()
+    //Missing loop of enemies doing BlockCollisionProcess() and OtherCollisionProcess()
     //*TO BE DONE
     for (int i=0;i<int(items.size());i++){
         items[i]->PhysicProcess(time);
@@ -29,6 +28,19 @@ void CollisionManager::UpdateProcess(double time){
             OtherCollisionProcess(items[i]);
             if (!i_flag){items[i]->SetOnGround(false);}
         }
+    }
+
+    int fb_size = m_fireballs.size();
+    for (int i = 0; i < fb_size; i++) {
+        auto fb = m_fireballs.front();
+        m_fireballs.pop();
+        fb->Behavior(time);
+        OtherCollisionProcess(fb);
+        BlockCollisionProcess(fb);
+        if (fb->OutOfRange(CameraPosition)) {
+            fb->MarkRemove();
+        }
+        m_fireballs.push(fb);
     }
 
     RemoveMarkedObject();
@@ -47,7 +59,7 @@ void CollisionManager::BlockCollisionProcess(std::shared_ptr<Character> characte
             b_box.ifCollide(c_box);
             if (mode == 0){
                 if (c_state == CollisionBox::State::TOP && mario->GetVelocity().y > 0){
-                    blocks[i]->ContactBehavior(mario->GetMarioMode() != Mario::Mode::SMALL);
+                    blocks[i]->ContactBehavior(mario->GetMarioMode() != Mario::Mode::SMALL, mario);
                     float new_y = (b_box.GetPosition().y - b_box.GetHeight()/2) - c_box.GetHeight()/2;
                     auto c_velo = character->GetVelocity();
                     c_ani->SetPosition({c_pos.x, new_y});
@@ -101,6 +113,27 @@ void CollisionManager::BlockCollisionProcess(std::shared_ptr<Item> item){
                 }
                 i_ani->SetPosition({new_x, i_pos.y});
                 i_box.SetPosition({new_x, i_pos.y});
+            }
+        }
+    }
+}
+
+void CollisionManager::BlockCollisionProcess(std::shared_ptr<Fireball> fb){
+    auto f_box = fb->GetBox();
+    auto f_ani = fb->GetAnimationObject();
+    for (int i=0;i<int(blocks.size());i++){
+        auto b_box = blocks[i]->GetBox();
+        if (b_box.IsActive() && f_box.ifCollide(b_box)){
+            CollisionBox::State f_state = f_box.GetCurrentState();
+            b_box.ifCollide(f_box);
+            if (f_state == CollisionBox::State::BOTTOM){
+                glm::vec2 f_velo = fb->GetVelocity();
+                f_velo.y = fb->GetJumppower();
+                fb->SetVelocity(f_velo);
+                break;
+            }
+            else if (f_state == CollisionBox::State::RIGHT || f_state == CollisionBox::State::LEFT){
+                fb->SetExplode();
             }
         }
     }
@@ -221,6 +254,42 @@ void CollisionManager::OtherCollisionProcess(std::shared_ptr<Item> item){
     }
 }
 
+void CollisionManager::OtherCollisionProcess(std::shared_ptr<Fireball> fb){
+    auto f_ani = fb->GetAnimationObject();
+    auto f_box = fb->GetBox();
+    
+    for (int i=0;i<int(floor_boxes.size());i++){
+        if (f_box.ifCollide(floor_boxes[i])){
+            CollisionBox::State state = f_box.GetCurrentState(); 
+            if (state == CollisionBox::State::BOTTOM){
+                glm::vec2 f_velo = fb->GetVelocity();
+                f_velo.y = fb->GetJumppower();
+                fb->SetVelocity(f_velo);
+                break;
+            }
+            else if (state == CollisionBox::State::RIGHT || state == CollisionBox::State::LEFT){
+                fb->SetExplode();
+            }
+        }
+    }
+
+    for (int i=0;i<int(pipes.size());i++){
+        auto p_box = pipes[i]->GetBox();
+        if (f_box.ifCollide(p_box)){
+            CollisionBox::State f_state = f_box.GetCurrentState();
+            if (f_state == CollisionBox::State::BOTTOM){
+                glm::vec2 f_velo = fb->GetVelocity();
+                f_velo.y = fb->GetJumppower();
+                fb->SetVelocity(f_velo);
+                break;
+            }
+            else if (f_state == CollisionBox::State::RIGHT || f_state == CollisionBox::State::LEFT){
+                fb->SetExplode();
+            }
+        }
+    }
+}
+
 void CollisionManager::EnemyCollisionProcess(){
 
 }
@@ -269,6 +338,15 @@ void CollisionManager::RemoveMarkedObject(){
             return item->IsMarkedDestroy(); 
         }),
         items.end());
+
+    int fireballs_size = m_fireballs.size();
+    for (int i = 0; i < fireballs_size; i++) {
+        auto fb = m_fireballs.front();
+        m_fireballs.pop();
+        if (!fb->IsMarkedRemove()){
+            m_fireballs.push(fb);
+        }
+    }
 }
 
 void CollisionManager::RemoveDeadEnemy(){
@@ -277,4 +355,8 @@ void CollisionManager::RemoveDeadEnemy(){
 
 void CollisionManager::AddItem(std::shared_ptr<Item> item){
     items.push_back(item);
+}
+
+void CollisionManager::SetFireballs(std::queue<std::shared_ptr<Fireball>> fireballs){
+    m_fireballs = fireballs;
 }

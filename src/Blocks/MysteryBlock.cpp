@@ -1,12 +1,13 @@
 #include "Blocks/MysteryBlock.hpp"
 #include "Util/Logger.hpp"
 
-MysteryBlock::MysteryBlock(std::string defaultPath, glm::vec2 pos, float width, float height, int count) : 
+MysteryBlock::MysteryBlock(std::string itemType, std::string defaultPath, glm::vec2 pos, float width, float height, int count) : 
 Block(defaultPath, pos, width, height){
     init_pos = pos;
     top_pos = pos;
     top_pos.y += 20;
     itemCount = count;
+    this->itemType = itemType;
 
     std::vector<std::string> mys_ani;
     int choice;
@@ -24,11 +25,25 @@ Block(defaultPath, pos, width, height){
     GetAnimationObject()->SetCurrentAnimation(0);
 }
 
-void MysteryBlock::SpawnItem(){
+void MysteryBlock::SpawnItem(std::shared_ptr<Mario> mario){
     glm::vec2 spawn_pos = GetAnimationObject()->GetPosition();
     spawn_pos.y += 15.0f;
     hasItem = true;
-    if (itemType == "Mushroom"){
+
+    auto m_mode = mario->GetMarioMode();
+    if (itemType == "Coin"){
+        item = std::make_shared<Coin>(0, RESOURCE_DIR"/Sprites/Items/coin1.png", spawn_pos, 24.0f, 48.0f);
+        item->GetAnimationObject()->SetZIndex(GetAnimationObject()->GetZIndex() - 1);
+    }
+    else if (itemType == "Mushroom2"){
+        int direction = int(rand() % 2);
+        item = std::make_shared<Mushroom>(direction, 4, RESOURCE_DIR"/Sprites/Items/mushroom2.png"
+        , spawn_pos, 48.0f, 48.0f);
+        item->GetAnimationObject()->SetZIndex(GetAnimationObject()->GetZIndex() - 1);
+        item->SetStandingOnBlock(GetBox());
+        item->SetOnGround(true);
+    }
+    else if (m_mode == Mario::Mode::SMALL){
         int direction = int(rand() % 2);
         item = std::make_shared<Mushroom>(direction, 1, RESOURCE_DIR"/Sprites/Items/mushroom.png"
         , spawn_pos, 48.0f, 48.0f);
@@ -36,11 +51,10 @@ void MysteryBlock::SpawnItem(){
         item->SetStandingOnBlock(GetBox());
         item->SetOnGround(true);
     }
-    else if (itemType == "Flower"){
-
-    }
-    else if (itemType == "Coin"){
-
+    else if (m_mode == Mario::Mode::BIG || m_mode == Mario::Mode::FIRE){
+        item = std::make_shared<FireFlower>(2, RESOURCE_DIR"/Sprites/Items/fireflower1.png"
+            , spawn_pos, 48.0f, 48.0f);
+        item->GetAnimationObject()->SetZIndex(GetAnimationObject()->GetZIndex() - 1);
     }
 }
 
@@ -72,17 +86,18 @@ void MysteryBlock::PhysicProcess(double time){
     GetBox().SetPosition(new_pos);
 }
 
-void MysteryBlock::ContactBehavior(int choice){
+void MysteryBlock::ContactBehavior(int choice, std::shared_ptr<Mario> mario){
     choice=choice;
     if (itemCount > 0){
-        SpawnItem();
+        SpawnItem(mario);
         itemCount -= 1;
     }
     if (itemCount == 0){
         GetAnimationObject()->SetDefaultSprite(GetAnimationObject()->GetDefaultSprite());
         GetAnimationObject()->SetCurrentAnimation(-1);
-        if (!IsJumping()){
+        if (!IsJumping() && empty == false){
             SetJump(true);
         }
+        empty = true;
     }
 }

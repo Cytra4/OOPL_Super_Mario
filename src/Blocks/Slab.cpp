@@ -5,6 +5,6 @@ Slab::Slab(std::string defaultPath, glm::vec2 pos, float width, float height)
 
 }
 
-void Slab::ContactBehavior(int choice){
+void Slab::ContactBehavior(int choice, std::shared_ptr<Mario> mario){
     choice = choice;
 }

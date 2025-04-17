@@ -32,9 +32,6 @@ public:
     void MarioInitial();
 
     void CamPosAdjust();
-
-    //This function will probably be moved to somewhere else?
-    void FireballUpdate();
     
 private:
     State m_CurrentState = State::START;

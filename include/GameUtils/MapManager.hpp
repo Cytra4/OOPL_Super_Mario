@@ -9,6 +9,7 @@
 #include "Blocks/Pipe.hpp"
 #include "Blocks/Flag.hpp"
 #include "Items/Item.hpp"
+#include "Characters/Mario.hpp"
 #include "Util/Renderer.hpp"
 #include "pch.hpp"
 
@@ -18,6 +19,7 @@ private:
     std::vector<std::shared_ptr<Block>> blocks_store;
     std::vector<std::shared_ptr<Pipe>> pipes_store;
     std::vector<std::shared_ptr<Item>> items_store;
+    std::queue<std::shared_ptr<Fireball>> m_fireballs_store;
     std::vector<CollisionBox> floor_boxes;
     std::shared_ptr<Flag> flag;
     std::shared_ptr<Background> background;
@@ -41,6 +43,8 @@ public:
 
     std::vector<CollisionBox> GetFloors();
 
+    std::queue<std::shared_ptr<Fireball>> GetMFireballs();
+
     //Read the data, construct background, blocks
     void MapDataInitialize();
 
@@ -50,13 +54,15 @@ public:
     //Delete all the blocks, background, and remove them from renderer
     void ClearMap(Util::Renderer& renderer);
 
-    //Right now is checking if MysteryBlock has spawned item
-    void UpdateMap(Util::Renderer& renderer, std::shared_ptr<CollisionManager> CManager);
+    //Checking if MysteryBlock has spawned item
+    //Checking the fireballs
+    void UpdateMap(Util::Renderer& renderer, std::shared_ptr<CollisionManager> CManager, std::shared_ptr<Mario> mario);
 
     void DestroyMarkedObject(Util::Renderer& renderer);
 
     //When item goes out of range, mark destroy it
     void OutOfRangeMarkDestroy(glm::vec2 cam_pos);
+    
 };
 
 #endif

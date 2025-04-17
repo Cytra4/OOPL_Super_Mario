@@ -19,26 +19,3 @@ void App::CamPosAdjust(){
 
     CameraPosition *= -1;
 }
-
-void App::FireballUpdate(){
-    auto m_fireballs = mario->GetFireballs();
-    for (auto fb : m_fireballs){
-        fireballStore.push(fb);
-        m_Renderer.AddChild(fb->GetAnimationObject());
-    }
-
-    //1.Perform all physic process of fireballs
-    //2.Removing fireballs that should be removed
-    int fireballs_size = fireballStore.size();
-    //LOG_DEBUG(fireballs_size);
-    for (int i = 0; i < fireballs_size; i++) {
-        auto fb = fireballStore.front();
-        fireballStore.pop();
-        fb->Behavior();
-        if (fb->OutOfRange(-CameraPosition) || fb->IsMarkedRemove()) {
-            m_Renderer.RemoveChild(fb->GetAnimationObject());
-            continue;
-        }
-        fireballStore.push(fb);
-    }
-}

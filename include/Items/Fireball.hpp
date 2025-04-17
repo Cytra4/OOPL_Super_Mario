@@ -15,8 +15,11 @@ private:
     std::shared_ptr<AnimationObject> ani_obj;
     FireballType type;
     CollisionBox box;
+
     glm::vec2 velocity = {0.0f,0.0f};
     int speed;
+    float jumpPower = 300.0f;
+    float gravity = -500.0f;
     bool remove = false;
     bool explode = false;
     bool facingRight;
@@ -26,9 +29,9 @@ public:
 
     FireballType GetType();
 
-    void Behavior();
+    void Behavior(double time);
 
-    void PhysicProcess();
+    void PhysicProcess(double time);
 
     bool OutOfRange(glm::vec2 camPos);
 
@@ -41,6 +44,16 @@ public:
     bool IsMarkedRemove();
 
     std::shared_ptr<AnimationObject> GetAnimationObject();
+
+    CollisionBox& GetBox();
+
+    void SetVelocity(glm::vec2 new_velo);
+
+    glm::vec2 GetVelocity();
+
+    int GetJumppower();
+
+    void SetExplode();
 };
 
 #endif

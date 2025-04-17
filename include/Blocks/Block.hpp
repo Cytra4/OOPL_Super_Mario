@@ -4,6 +4,7 @@
 #include "GameUtils/CollisionBox.hpp"
 #include "GameUtils/AnimationObject.hpp"
 #include "Items/Item.hpp"
+#include "Characters/Mario.hpp"
 
 //Base class for all the blocks
 class Block{
@@ -31,11 +32,11 @@ public:
     //The idea is that Block would have different ContactBehavior based on the given choice
     //ex: A brick block, if choice = 0, the brick will jump up a bit and fall down back to original position
     //if choice = 1, the brick will break
-    virtual void ContactBehavior(int choice){choice = choice;};
+    virtual void ContactBehavior(int choice, std::shared_ptr<Mario> mario){choice = choice;};
 
     virtual void PhysicProcess(double time){time = time;}
 
-    virtual void SpawnItem(){};
+    virtual void SpawnItem(std::shared_ptr<Mario> mario){mario = mario;};
 
     void SetHasItem(bool choice);
     
