@@ -266,10 +266,10 @@ void Mario::ShootFireball(){
         
         glm::vec2 f_pos = ani_obj->GetPosition();
         if (IsFacingRight()){
-            f_pos += glm::vec2{50,0};
+            f_pos += glm::vec2{30,0};
         }
         else{
-            f_pos -= glm::vec2{50,0};
+            f_pos -= glm::vec2{30,0};
         }
 
         std::shared_ptr<Fireball> fireball = std::make_shared<Fireball>(FireballType::MARIO, 
