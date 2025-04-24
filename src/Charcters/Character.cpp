@@ -59,10 +59,26 @@ bool Character::IsDead(){
     return dead;
 }
 
+void Character::MarkDestroy(){
+    markedDestroy = true;
+}
+
+bool Character::IsMarkedDestroy(){
+    return markedDestroy;
+}
+
 void Character::SetHealth(int new_health){
     health = new_health;
 }
 
 int Character::GetHealth(){
     return health;
+}
+
+void Character::SetActive(){
+    active = true;
+}
+
+bool Character::IsActive(){
+    return active;
 }

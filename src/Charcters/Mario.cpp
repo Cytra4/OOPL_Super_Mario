@@ -86,6 +86,14 @@ void Mario::PhysicProcess(double time){
         jumpFallGravity = 2.5;
     }
 
+    if (!canTakeDamage){
+        iFrames -= deltaTime;
+        if (iFrames <= 0){
+            canTakeDamage = true;
+            iFrames = 0.5f;
+        }
+    }
+
     //Fixing mario's position when he's standing on block 
     if (IsOnGround()){
         mario_velo.y = 0;
@@ -134,15 +142,18 @@ void Mario::AnimationHandle(){
 }
 
 void Mario::Hurt(){
-    int health = GetHealth();
-    if (health == 3){
-        StateUpdate(Mode::BIG);
-    }
-    else if (health == 2){
-        StateUpdate(Mode::SMALL);
-    }
-    else if (health == 1){
-        SetDead(true);
+    if (canTakeDamage){
+        int health = GetHealth();
+        if (health == 3){
+            StateUpdate(Mode::BIG);
+        }
+        else if (health == 2){
+            StateUpdate(Mode::SMALL);
+        }
+        else if (health == 1){
+            SetDead(true);
+        }
+        canTakeDamage = false;
     }
 }
 

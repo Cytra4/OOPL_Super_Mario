@@ -31,6 +31,10 @@ std::vector<CollisionBox> MapManager::GetFloors(){
     return floor_boxes;
 }
 
+std::vector<std::shared_ptr<Goomba>> MapManager::GetGoombas(){
+    return goombas_store;
+}
+
 std::queue<std::shared_ptr<Fireball>> MapManager::GetMFireballs(){
     return m_fireballs_store;
 }
@@ -46,25 +50,38 @@ void MapManager::MapDataInitialize(){
             int block_type = mapData[i][j];
             glm::vec2 block_pos = glm::vec2{startingPoint.x + 48*j + 24, startingPoint.y - 48*i - 24};
             if (block_type == 1){
+                //Mystery Block with coin
                 std::shared_ptr<MysteryBlock> new_block = std::make_shared<MysteryBlock>("Coin", RESOURCE_DIR"/Sprites/Blocks/empty" + choice + ".png", block_pos, 48,48, 1);
                 blocks_store.push_back(new_block);
             }
             else if (block_type == 2){
+                //Brick
                 std::shared_ptr<Brick> new_block = std::make_shared<Brick>(RESOURCE_DIR"/Sprites/Blocks/brick" + choice +".png", block_pos, 48, 48);
                 blocks_store.push_back(new_block);
             }
             else if (block_type == 3){
+                //Slab
                 std::shared_ptr<Slab> new_block = std::make_shared<Slab>(RESOURCE_DIR"/Sprites/Blocks/slab" + choice + ".png", block_pos, 48, 48);
                 blocks_store.push_back(new_block);
             }
             else if (block_type == 4){
+                //Mushroom/Flower
                 std::shared_ptr<MysteryBlock> new_block = std::make_shared<MysteryBlock>("Mushroom", RESOURCE_DIR"/Sprites/Blocks/empty" + choice + ".png", block_pos, 48,48, 1);
                 blocks_store.push_back(new_block);
             }
             else if (block_type == 5){
-                //This is maybe saving for 1UP
+                //1UP
                 std::shared_ptr<MysteryBlock> new_block = std::make_shared<MysteryBlock>("Mushroom2", RESOURCE_DIR"/Sprites/Blocks/empty" + choice + ".png", block_pos, 48,48, 1);
                 blocks_store.push_back(new_block);
+            }
+            else if (block_type == 6){
+                //Goomba
+                int type;
+                if (level == "1_1"){type = 1;}
+                else if (level == "1_2"){type = 2;}
+                else{type = 3;}
+                std::shared_ptr<Goomba> new_goomba = std::make_shared<Goomba>(type, block_pos, 48, 48);
+                goombas_store.push_back(new_goomba);
             }
         }
     }
@@ -95,6 +112,10 @@ void MapManager::DrawMap(Util::Renderer& renderer){
 
     for (int i=0;i<int(pipes_store.size());i++){
         renderer.AddChild(pipes_store[i]->GetAnimationObject());
+    }
+
+    for (int i=0;i<int(goombas_store.size());i++){
+        renderer.AddChild(goombas_store[i]->GetAnimationObject());
     }
 
     renderer.AddChild(flag->GetAnimationObject());
@@ -158,6 +179,17 @@ void MapManager::DestroyMarkedObject(Util::Renderer& renderer){
         }),
         items_store.end());
 
+    for (int i=0;i<int(goombas_store.size());i++){
+        if (goombas_store[i]->IsMarkedDestroy()){
+            renderer.RemoveChild(goombas_store[i]->GetAnimationObject());
+        }
+    }
+    goombas_store.erase(std::remove_if(goombas_store.begin(), goombas_store.end(),
+        [](const std::shared_ptr<Goomba>& enemy) {
+            return enemy->IsMarkedDestroy(); 
+        }),
+        goombas_store.end());
+
     int fireballs_size = m_fireballs_store.size();
     for (int i = 0; i < fireballs_size; i++) {
         auto fb = m_fireballs_store.front();
@@ -175,8 +207,8 @@ void MapManager::OutOfRangeMarkDestroy(glm::vec2 cam_pos){
         bool Xoverlap = false;
         bool Yoverlap = false;
         glm::vec2 pos = items_store[i]->GetAnimationObject()->GetPosition();
-        Xoverlap = cam_pos.x - 400 >= pos.x ||
-                cam_pos.x + 400 <= pos.x;
+        Xoverlap = cam_pos.x - 450 >= pos.x || 
+                cam_pos.x + 450 <= pos.x;
         Yoverlap = cam_pos.y - 360 >= pos.y ||
                 cam_pos.y + 360 <= pos.y;
         if (Xoverlap || Yoverlap){

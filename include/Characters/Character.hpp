@@ -13,6 +13,8 @@ private:
     bool onGround = false;
     bool dead = false;
     bool facingRight = true;
+    bool markedDestroy = false;
+    bool active = false;
     int health = 1;
 
 protected:
@@ -69,9 +71,17 @@ public:
     
     bool IsDead();
 
+    void MarkDestroy();
+
+    bool IsMarkedDestroy();
+
     void SetHealth(int new_health);
 
     int GetHealth();
+
+    void SetActive();
+
+    bool IsActive();
 };
 
 #endif

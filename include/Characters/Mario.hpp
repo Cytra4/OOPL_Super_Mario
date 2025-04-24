@@ -49,6 +49,8 @@ private:
     bool isJumpKeyHeld = false;
     bool canShootFireballs = false;
     double fireball_CD_timer = 0;
+    bool canTakeDamage = true;
+    double iFrames = 0.5;
     std::vector<std::shared_ptr<Fireball>> fireballs;
 };
 

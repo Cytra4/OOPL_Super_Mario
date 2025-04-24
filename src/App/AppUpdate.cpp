@@ -10,7 +10,6 @@ void App::Update(){
         deltaTime = 0.02;
     }
 
-    //CollisionManager Test
     //*A Important note here
     //CManager's UpdateProcess() *HAS* to be executed before PhysicProcess() of character
     //(Not sure if it's the same for other character, but for Mario it has to be this way)
@@ -20,8 +19,6 @@ void App::Update(){
     MManager->OutOfRangeMarkDestroy(-CameraPosition);
     MManager->DestroyMarkedObject(m_Renderer);
     MManager->UpdateMap(m_Renderer, CManager, mario);
-
-    //LOG_DEBUG(mario->GetAnimationObject()->GetPosition());
 
     if (Util::Input::IsKeyPressed(Util::Keycode::J)){
         mario->ShootFireball();

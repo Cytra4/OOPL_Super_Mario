@@ -10,6 +10,7 @@
 #include "Blocks/Flag.hpp"
 #include "Items/Item.hpp"
 #include "Characters/Mario.hpp"
+#include "Characters/Goomba.hpp"
 #include "Util/Renderer.hpp"
 #include "pch.hpp"
 
@@ -19,6 +20,7 @@ private:
     std::vector<std::shared_ptr<Block>> blocks_store;
     std::vector<std::shared_ptr<Pipe>> pipes_store;
     std::vector<std::shared_ptr<Item>> items_store;
+    std::vector<std::shared_ptr<Goomba>> goombas_store;
     std::queue<std::shared_ptr<Fireball>> m_fireballs_store;
     std::vector<CollisionBox> floor_boxes;
     std::shared_ptr<Flag> flag;
@@ -42,6 +44,8 @@ public:
     std::shared_ptr<Background> GetBackground();
 
     std::vector<CollisionBox> GetFloors();
+
+    std::vector<std::shared_ptr<Goomba>> GetGoombas();
 
     std::queue<std::shared_ptr<Fireball>> GetMFireballs();
 
