@@ -12,6 +12,9 @@ int main(int, char**){
         else if (current_state == App::State::UPDATE){
             game.Update();
         }
+        else if (current_state == App::State::MARIO_DEATH){
+            game.MarioDeath(0.02);
+        }
         else{
             game.End();
             context->SetExit(true);

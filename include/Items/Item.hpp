@@ -9,7 +9,7 @@ private:
     std::shared_ptr<AnimationObject> ani_obj;
     CollisionBox box;
     CollisionBox standingOn;
-    glm::vec2 velocity = {200.0f,0.0f};
+    glm::vec2 velocity = {150.0f,0.0f};
     bool onGround = false;
     bool destroy = false;
     //How this item will change mario's state, ex:1 -> Turns to Big Mario

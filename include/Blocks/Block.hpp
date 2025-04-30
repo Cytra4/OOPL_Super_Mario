@@ -18,7 +18,7 @@ private:
 protected:
     glm::vec2 init_pos;
     glm::vec2 top_pos;
-    glm::vec2 velocity = {0.0f,150.0f};
+    glm::vec2 velocity = {0.0f,100.0f};
     bool hasItem = false;
     std::shared_ptr<Item> item;
 
@@ -48,6 +48,8 @@ public:
     CollisionBox& GetBox();
 
     std::shared_ptr<AnimationObject> GetAnimationObject();
+
+    glm::vec2 GetVelocity();
 
     void SetJump(bool j);
 

@@ -95,7 +95,7 @@ void Mario::PhysicProcess(double time){
     }
 
     //Fixing mario's position when he's standing on block 
-    if (IsOnGround()){
+    if (IsOnGround() && !IsDead()){
         mario_velo.y = 0;
         jumpFallGravity = 3;
         isJumping = false;
@@ -152,6 +152,7 @@ void Mario::Hurt(){
         }
         else if (health == 1){
             SetDead(true);
+            SetVelocity(glm::vec2{0.0f,1000.0f});
         }
         canTakeDamage = false;
     }

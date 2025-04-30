@@ -1,4 +1,5 @@
 #include "Characters/Goomba.hpp"
+#include "Util/Logger.hpp"
 
 Goomba::Goomba(int type, glm::vec2 position, float width, float height)
 : Character(RESOURCE_DIR"/Sprites/Enemies/goomba" + std::to_string(type) + "_1.png",
@@ -31,6 +32,7 @@ void Goomba::SetDeath(int choice){
         GetBox().SetPosition(g_pos);
         GetAnimationObject()->SetPosition(g_pos);
     }
+    SetDead(true);
 }
 
 void Goomba::Behavior(){
@@ -63,8 +65,9 @@ void Goomba::PhysicProcess(double time){
             }
         }
         else{
-            //This probably will be testing if it is out of map
-            //then mark destroy it
+            if (g_pos.y < -400){
+                MarkDestroy();
+            }
         }
     }
     

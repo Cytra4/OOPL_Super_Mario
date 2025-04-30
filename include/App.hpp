@@ -18,6 +18,7 @@ public:
     enum class State {
         START,
         UPDATE,
+        MARIO_DEATH,
         END,
     };
 
@@ -26,6 +27,8 @@ public:
     void Start();
 
     void Update();
+
+    void MarioDeath(double time);
 
     void End(); // NOLINT(readability-convert-member-functions-to-static)
 
@@ -39,7 +42,9 @@ private:
     Util::Time m_Time;
     glm::vec2 CameraPosition;
     bool m_EnterDown = false;
+    bool rendered = false;
     std::shared_ptr<Mario> mario;
+    double m_death_timer = 0.5f;
 
     //Use for storing all the fireballs for update
     //Will to moved to other places? (Or not)

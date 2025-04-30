@@ -7,6 +7,7 @@
 #include "Items/Item.hpp"
 #include "Characters/Mario.hpp"
 #include "Characters/Goomba.hpp"
+#include "Characters/Koopa.hpp"
 
 //This class will be use to handle all the collision of characters, blocks and other objects with collision box 
 
@@ -14,6 +15,7 @@ class CollisionManager{
 private:
     std::shared_ptr<Mario> mario;
     std::vector<std::shared_ptr<Goomba>> goombas;
+    std::vector<std::shared_ptr<Koopa>> koopas;
     std::vector<std::shared_ptr<Block>> blocks;
     std::vector<std::shared_ptr<Pipe>> pipes;
     std::vector<std::shared_ptr<Item>> items;
@@ -50,7 +52,9 @@ public:
 
     //↑ *TO BE DONE
     //Check collision between Enemies
-    void EECollisionProcess(std::shared_ptr<Character> enemy, int index);
+    void EECollisionProcess(std::shared_ptr<Goomba> goomba, int index);
+
+    void EECollisionProcess(std::shared_ptr<Koopa> koopa, int index);
 
     //Check the collision of Mario and items
     void ItemCollisionProcess();
@@ -63,6 +67,8 @@ public:
     void SetFireballs(std::queue<std::shared_ptr<Fireball>> fireballs);
 
     void SetGoombas(std::vector<std::shared_ptr<Goomba>> goombas);
+
+    void SetKoopas(std::vector<std::shared_ptr<Koopa>> koopas);
 
     //This will be used to test if the enemy is in Camera range
     //if not then enemy will not be doing PhysicProcess() (or Behavior() too)

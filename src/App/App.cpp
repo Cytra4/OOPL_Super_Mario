@@ -19,3 +19,18 @@ void App::CamPosAdjust(){
 
     CameraPosition *= -1;
 }
+
+void App::MarioDeath(double time){
+    m_death_timer -= time;
+    if (m_death_timer <= 0){
+        if (mario->GetBox().GetPosition().y > -450){
+            mario->PhysicProcess(time/1.5);
+        }
+        else{
+            m_CurrentState = State::START;
+            m_death_timer = 0.5f;
+        }
+    }
+    mario->AnimationHandle();
+    m_Renderer.Update(CameraPosition);
+}

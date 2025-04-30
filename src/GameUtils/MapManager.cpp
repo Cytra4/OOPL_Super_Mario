@@ -35,6 +35,10 @@ std::vector<std::shared_ptr<Goomba>> MapManager::GetGoombas(){
     return goombas_store;
 }
 
+std::vector<std::shared_ptr<Koopa>> MapManager::GetKoopas(){
+    return koopas_store;
+}
+
 std::queue<std::shared_ptr<Fireball>> MapManager::GetMFireballs(){
     return m_fireballs_store;
 }
@@ -80,8 +84,16 @@ void MapManager::MapDataInitialize(){
                 if (level == "1_1"){type = 1;}
                 else if (level == "1_2"){type = 2;}
                 else{type = 3;}
-                std::shared_ptr<Goomba> new_goomba = std::make_shared<Goomba>(type, block_pos, 48, 48);
+                std::shared_ptr<Goomba> new_goomba = std::make_shared<Goomba>(type, block_pos, 35, 48);
                 goombas_store.push_back(new_goomba);
+            }
+            else if (block_type == 7){
+                //Koopa
+                int type;
+                if (level == "1_1"){type = 1;}
+                else{type = 2;}
+                std::shared_ptr<Koopa> new_koopa = std::make_shared<Koopa>(type, block_pos, 35, 69);
+                koopas_store.push_back(new_koopa);
             }
         }
     }
@@ -118,6 +130,10 @@ void MapManager::DrawMap(Util::Renderer& renderer){
         renderer.AddChild(goombas_store[i]->GetAnimationObject());
     }
 
+    for (int i=0;i<int(koopas_store.size());i++){
+        renderer.AddChild(koopas_store[i]->GetAnimationObject());
+    }
+
     renderer.AddChild(flag->GetAnimationObject());
     renderer.AddChild(flag->GetFlagAniObj());
 }
@@ -129,6 +145,23 @@ void MapManager::ClearMap(Util::Renderer& renderer){
     for (int i=0;i<int(pipes_store.size());i++){
         renderer.RemoveChild(pipes_store[i]->GetAnimationObject());
     }
+    for (int i=0;i<int(items_store.size());i++){
+        renderer.RemoveChild(items_store[i]->GetAnimationObject());
+    }
+    for (int i=0;i<int(goombas_store.size());i++){
+        renderer.RemoveChild(goombas_store[i]->GetAnimationObject());
+    }
+    for (int i=0;i<int(koopas_store.size());i++){
+        renderer.RemoveChild(koopas_store[i]->GetAnimationObject());
+    }
+
+    int fireballs_size = m_fireballs_store.size();
+    for (int i = 0; i < fireballs_size; i++) {
+        auto fb = m_fireballs_store.front();
+        m_fireballs_store.pop();
+        renderer.RemoveChild(fb->GetAnimationObject());
+    }
+
     renderer.RemoveChild(background);
     renderer.RemoveChild(flag->GetAnimationObject());
     renderer.RemoveChild(flag->GetFlagAniObj());
@@ -190,6 +223,17 @@ void MapManager::DestroyMarkedObject(Util::Renderer& renderer){
         }),
         goombas_store.end());
 
+    for (int i=0;i<int(koopas_store.size());i++){
+        if (koopas_store[i]->IsMarkedDestroy()){
+            renderer.RemoveChild(koopas_store[i]->GetAnimationObject());
+        }
+    }
+    koopas_store.erase(std::remove_if(koopas_store.begin(), koopas_store.end(),
+        [](const std::shared_ptr<Koopa>& enemy) {
+            return enemy->IsMarkedDestroy(); 
+        }),
+        koopas_store.end());
+
     int fireballs_size = m_fireballs_store.size();
     for (int i = 0; i < fireballs_size; i++) {
         auto fb = m_fireballs_store.front();
@@ -213,6 +257,21 @@ void MapManager::OutOfRangeMarkDestroy(glm::vec2 cam_pos){
                 cam_pos.y + 360 <= pos.y;
         if (Xoverlap || Yoverlap){
             items_store[i]->MarkDestroy();
+        }
+    }
+
+    for (int i=0;i<int(koopas_store.size());i++){
+        bool Xoverlap = false;
+        bool Yoverlap = false;
+        glm::vec2 pos = koopas_store[i]->GetAnimationObject()->GetPosition();
+        Xoverlap = cam_pos.x - 450 >= pos.x || 
+                cam_pos.x + 450 <= pos.x;
+        Yoverlap = cam_pos.y - 360 >= pos.y ||
+                cam_pos.y + 360 <= pos.y;
+        if (Xoverlap || Yoverlap){
+            if (koopas_store[i]->GetDeath() != 0){
+                koopas_store[i]->MarkDestroy();
+            }
         }
     }
 }

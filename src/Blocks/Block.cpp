@@ -33,6 +33,10 @@ std::shared_ptr<AnimationObject> Block::GetAnimationObject(){
     return ani_obj;
 }
 
+glm::vec2 Block::GetVelocity(){
+    return velocity;
+}
+
 void Block::SetJump(bool j){
     isJumping = j;
 }

@@ -11,6 +11,7 @@
 #include "Items/Item.hpp"
 #include "Characters/Mario.hpp"
 #include "Characters/Goomba.hpp"
+#include "Characters/Koopa.hpp"
 #include "Util/Renderer.hpp"
 #include "pch.hpp"
 
@@ -21,6 +22,7 @@ private:
     std::vector<std::shared_ptr<Pipe>> pipes_store;
     std::vector<std::shared_ptr<Item>> items_store;
     std::vector<std::shared_ptr<Goomba>> goombas_store;
+    std::vector<std::shared_ptr<Koopa>> koopas_store;
     std::queue<std::shared_ptr<Fireball>> m_fireballs_store;
     std::vector<CollisionBox> floor_boxes;
     std::shared_ptr<Flag> flag;
@@ -46,6 +48,8 @@ public:
     std::vector<CollisionBox> GetFloors();
 
     std::vector<std::shared_ptr<Goomba>> GetGoombas();
+
+    std::vector<std::shared_ptr<Koopa>> GetKoopas();
 
     std::queue<std::shared_ptr<Fireball>> GetMFireballs();
 

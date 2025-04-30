@@ -20,11 +20,15 @@ void App::Update(){
     MManager->DestroyMarkedObject(m_Renderer);
     MManager->UpdateMap(m_Renderer, CManager, mario);
 
+    if (mario->IsDead() || mario->GetBox().GetPosition().y < -400){
+        m_CurrentState = State::MARIO_DEATH;
+    }
+
     if (Util::Input::IsKeyPressed(Util::Keycode::J)){
         mario->ShootFireball();
     }
 
-    //Mario mode testing
+    //Mario mode
     if (Util::Input::IsKeyPressed(Util::Keycode::Z)){
         mario->StateUpdate(Mario::Mode::SMALL);
     }
@@ -35,6 +39,7 @@ void App::Update(){
         mario->StateUpdate(Mario::Mode::FIRE);
     }
 
+    //Mario position reset
     if (Util::Input::IsKeyPressed(Util::Keycode::F)){
         auto pos = mario->GetAnimationObject()->GetPosition();
         mario->GetAnimationObject()->SetPosition({pos.x,360.0f});
