@@ -87,7 +87,10 @@ void MysteryBlock::PhysicProcess(double time){
 }
 
 void MysteryBlock::ContactBehavior(int choice, std::shared_ptr<Mario> mario){
-    choice=choice;
+    if (choice == -1){
+        return;
+    }
+    
     if (itemCount > 0){
         SpawnItem(mario);
         itemCount -= 1;

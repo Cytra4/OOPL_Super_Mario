@@ -19,6 +19,10 @@ void App::MarioInitial(){
     mario_dead.emplace_back(RESOURCE_DIR"/Sprites/Mario/mario_dead.png");
     mario_ani->AddNewAnimation(mario_dead);
 
+    std::vector<std::string> mario_climb;
+    mario_climb.emplace_back(RESOURCE_DIR"/Sprites/Mario/Small/mario_climb.png");
+    mario_ani->AddNewAnimation(mario_climb);
+
     mario_ani->SetZIndex(50);
 
     m_Renderer.AddChild(mario_ani);

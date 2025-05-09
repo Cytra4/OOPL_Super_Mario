@@ -30,6 +30,8 @@ protected:
 
     std::shared_ptr<AnimationObject> ani_obj;
 
+    bool isVisible = true;
+
 public:
     Character(std::string ImagePath, int movespeed, glm::vec2 position, float width, float height);
 

@@ -13,11 +13,21 @@ namespace MapDataHolder{
 
     std::vector<std::vector<float>> GetPipeData(std::string level);
 
-    std::vector<int> GetHiddenPipeData(std::string level);
+    std::vector<std::vector<double>> GetHiddenPipeData(std::string level);
 
     glm::vec2 GetFlagPosition(std::string level);
 
     glm::vec2 GetMarioPosition(std::string level);
+
+    glm::vec2 GetCastlePosition(std::string level);
+
+    glm::vec2 GetCastleFlagPosition(std::string level);
+
+    std::string GetSecretLevel(std::string level);
+
+    std::string GetNextLevel(std::string level);
+
+    std::vector<std::vector<int>> GetPiranhaSetting(std::string level);
 };
 
 #endif

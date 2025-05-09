@@ -8,10 +8,13 @@
 #include "Blocks/Slab.hpp"
 #include "Blocks/Pipe.hpp"
 #include "Blocks/Flag.hpp"
+#include "Blocks/MovingBridge.hpp"
 #include "Items/Item.hpp"
+#include "Items/FCoin.hpp"
 #include "Characters/Mario.hpp"
 #include "Characters/Goomba.hpp"
 #include "Characters/Koopa.hpp"
+#include "Characters/Piranha.hpp"
 #include "Util/Renderer.hpp"
 #include "pch.hpp"
 
@@ -21,15 +24,23 @@ private:
     std::vector<std::shared_ptr<Block>> blocks_store;
     std::vector<std::shared_ptr<Pipe>> pipes_store;
     std::vector<std::shared_ptr<Item>> items_store;
+    
     std::vector<std::shared_ptr<Goomba>> goombas_store;
     std::vector<std::shared_ptr<Koopa>> koopas_store;
+    std::vector<std::shared_ptr<Piranha>> piranhas_store;
+
     std::queue<std::shared_ptr<Fireball>> m_fireballs_store;
     std::vector<CollisionBox> floor_boxes;
     std::shared_ptr<Flag> flag;
     std::shared_ptr<Background> background;
+    std::shared_ptr<AnimationObject> castle;
+    std::shared_ptr<AnimationObject> castle_flag;
 
     float barrier;
-
+    bool hasCastle;
+    bool hasCastleFlag;
+    bool hasFlag;
+    
 public:
     MapManager(std::string level);
 
@@ -47,11 +58,21 @@ public:
 
     std::vector<CollisionBox> GetFloors();
 
+    std::vector<std::shared_ptr<Item>> GetItems();
+
     std::vector<std::shared_ptr<Goomba>> GetGoombas();
 
     std::vector<std::shared_ptr<Koopa>> GetKoopas();
 
+    std::vector<std::shared_ptr<Piranha>> GetPiranhas();
+
     std::queue<std::shared_ptr<Fireball>> GetMFireballs();
+
+    std::shared_ptr<Flag> GetFlag();
+
+    std::shared_ptr<AnimationObject> GetCastleFlag();
+
+    void SwitchLevel(std::string new_level);
 
     //Read the data, construct background, blocks
     void MapDataInitialize();

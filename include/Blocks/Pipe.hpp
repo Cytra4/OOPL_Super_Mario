@@ -12,6 +12,7 @@ private:
     CollisionBox box;
     bool canEnter;
     std::string next_level;
+    int height;
 
 public:
     Pipe(bool enter, std::string level, int height, glm::vec2 pos);
@@ -19,6 +20,12 @@ public:
     CollisionBox& GetBox();
 
     std::shared_ptr<AnimationObject> GetAnimationObject();
+
+    bool CanBeEnter();
+
+    int GetHeight();
+
+    std::string GetNextLevel();
 };
 
 #endif

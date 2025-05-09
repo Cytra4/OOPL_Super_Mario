@@ -41,6 +41,10 @@ void Brick::PhysicProcess(double time){
 }
 
 void Brick::ContactBehavior(int choice, std::shared_ptr<Mario> mario){
+    if (choice == -1){
+        return;
+    }
+
     if (choice == 0){
         if (!IsJumping()){
             SetJump(true);

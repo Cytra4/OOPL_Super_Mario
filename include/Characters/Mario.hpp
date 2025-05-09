@@ -50,7 +50,7 @@ private:
     bool canShootFireballs = false;
     double fireball_CD_timer = 0;
     bool canTakeDamage = true;
-    double iFrames = 1.5;
+    double iFrames = 2.5f;
     std::vector<std::shared_ptr<Fireball>> fireballs;
 };
 

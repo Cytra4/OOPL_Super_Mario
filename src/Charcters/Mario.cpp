@@ -88,9 +88,13 @@ void Mario::PhysicProcess(double time){
 
     if (!canTakeDamage){
         iFrames -= deltaTime;
+        ani_obj->SetVisible(!isVisible);
+        isVisible = !isVisible;
         if (iFrames <= 0){
             canTakeDamage = true;
             iFrames = 0.5f;
+            isVisible = true;
+            ani_obj->SetVisible(true);
         }
     }
 
@@ -146,15 +150,16 @@ void Mario::Hurt(){
         int health = GetHealth();
         if (health == 3){
             StateUpdate(Mode::BIG);
+            canTakeDamage = false;
         }
         else if (health == 2){
             StateUpdate(Mode::SMALL);
+            canTakeDamage = false;
         }
         else if (health == 1){
             SetDead(true);
             SetVelocity(glm::vec2{0.0f,1000.0f});
         }
-        canTakeDamage = false;
     }
 }
 

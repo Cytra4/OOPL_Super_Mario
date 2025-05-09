@@ -10,7 +10,7 @@ private:
     //if Koopa gets jumped again, Koopa will start moving around at high speed (shell_kicked = true) 
     bool shelled = false;
     bool shell_kicked = false;
-    double shelled_speed = 700.0f;
+    double shelled_speed = 600.0f;
 
 public:
     Koopa(int type, glm::vec2 position, float width, float height);

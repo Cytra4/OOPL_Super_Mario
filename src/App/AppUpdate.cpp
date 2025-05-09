@@ -39,19 +39,21 @@ void App::Update(){
         mario->StateUpdate(Mario::Mode::FIRE);
     }
 
-    //Mario position reset
-    if (Util::Input::IsKeyPressed(Util::Keycode::F)){
-        auto pos = mario->GetAnimationObject()->GetPosition();
-        mario->GetAnimationObject()->SetPosition({pos.x,360.0f});
-        mario->GetBox().SetPosition({pos.x,360.0f});
+    if (CManager->IsLevelCleared()){
+        m_CurrentState = State::LEVEL_CLEAR;
+        CManager->ResetStates();
     }
-
+    else if (CManager->EnterSecretLevel()){
+        m_CurrentState = State::PIPE_ENTER;
+        CManager->ResetStates();
+    }
 
     if (Util::Input::IsKeyPressed(Util::Keycode::ESCAPE) || Util::Input::IfExit()) {
         m_CurrentState = State::END;
     }
 
+    //LOG_DEBUG("CAMERA:{} MARIO:{}",CameraPosition,mario->GetBox().GetPosition());
+    CManager->UpdateLBarrier(level);
     CamPosAdjust();
-
     m_Renderer.Update(CameraPosition);
 }
