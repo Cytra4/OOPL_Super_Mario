@@ -47,6 +47,17 @@ void App::Update(){
         m_CurrentState = State::PIPE_ENTER;
         CManager->ResetStates();
     }
+    else if (CManager->IsGameCleared()){
+        mario->GetAnimationObject()->SetPosition(glm::vec2{2952,-24});
+        mario->GetBox().SetPosition(glm::vec2{2952,-24});
+        if (MManager->GetBowser().size() > 0){
+            m_CurrentState = State::BRIDGE_CLEAR;
+        }
+        else{
+            m_CurrentState = State::GAME_CLEAR;
+        }
+        CManager->ResetStates();
+    }
 
     if (Util::Input::IsKeyPressed(Util::Keycode::ESCAPE) || Util::Input::IfExit()) {
         m_CurrentState = State::END;

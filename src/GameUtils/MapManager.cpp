@@ -51,12 +51,24 @@ std::queue<std::shared_ptr<Fireball>> MapManager::GetMFireballs(){
     return m_fireballs_store;
 }
 
+std::vector<std::shared_ptr<FireBar>> MapManager::GetFirebars(){
+    return firebars_store;
+}
+
+std::vector<std::shared_ptr<Bowser>> MapManager::GetBowser(){
+    return bowser_store;
+}
+
 std::shared_ptr<Flag> MapManager::GetFlag(){
     return flag;
 }
 
 std::shared_ptr<AnimationObject> MapManager::GetCastleFlag(){
     return castle_flag;
+}
+
+std::vector<std::shared_ptr<Block>> MapManager::GetCastleBridge(){
+    return bridge_store;
 }
 
 void MapManager::SwitchLevel(std::string new_level){
@@ -134,6 +146,44 @@ void MapManager::MapDataInitialize(){
                 std::shared_ptr<MovingBridge> new_bridge = std::make_shared<MovingBridge>(RESOURCE_DIR"/Sprites/Blocks/bridge1.png",
                     block_pos,144,24,1,380);
                 blocks_store.push_back(new_bridge);
+            }
+            else if (block_type == 11){
+                //Ground in 1-4
+                std::shared_ptr<Slab> new_block = std::make_shared<Slab>(RESOURCE_DIR"/Sprites/Blocks/ground3.png", block_pos, 48, 48);
+                blocks_store.push_back(new_block);
+            }
+            else if (block_type == 12){
+                //Empty block
+                std::shared_ptr<Slab> new_block = std::make_shared<Slab>(RESOURCE_DIR"/Sprites/Blocks/empty" + choice + ".png", block_pos, 48, 48);
+                blocks_store.push_back(new_block);
+            }
+            else if (block_type == 13){
+                //Bridge in 1-4
+                std::shared_ptr<Slab> new_block = std::make_shared<Slab>(RESOURCE_DIR"/Sprites/Blocks/castle_bridge.png", block_pos, 48, 48);
+                blocks_store.push_back(new_block);
+                bridge_store.push_back(new_block);
+            }
+            else if (block_type == 14){
+                //Firebar
+                std::shared_ptr<FireBar> new_firebar = std::make_shared<FireBar>(RESOURCE_DIR"/Sprites/Blocks/empty" + choice + ".png", block_pos
+                , 48, 48, true, 0);
+                firebars_store.push_back(new_firebar);
+            }
+            else if (block_type == 15){
+                //Bridge that moves left/right
+                std::shared_ptr<MovingBridge2> new_bridge = std::make_shared<MovingBridge2>(RESOURCE_DIR"/Sprites/Blocks/bridge2.png", block_pos, 
+                96, 24, 192);
+                blocks_store.push_back(new_bridge);
+            }
+            else if (block_type == 16){
+                //Bowser
+                std::shared_ptr<Bowser> bowser = std::make_shared<Bowser>(block_pos,96.0f,96.0f);
+                bowser_store.push_back(bowser);
+            }
+            else if (block_type == 17){
+                //Axe
+                std::shared_ptr<Axe> axe = std::make_shared<Axe>(RESOURCE_DIR"/Sprites/Blocks/axe1.png",block_pos,48.0f,48.0f);
+                items_store.push_back(axe);
             }
         }
     }
@@ -223,6 +273,11 @@ void MapManager::DrawMap(Util::Renderer& renderer){
         renderer.AddChild(blocks_store[i]->GetAnimationObject());
     }
 
+    for (int i=0;i<int(firebars_store.size());i++){
+        renderer.AddChild(firebars_store[i]->GetAnimationObject());
+        firebars_store[i]->DrawFireballs(renderer);
+    }
+
     for (int i=0;i<int(pipes_store.size());i++){
         renderer.AddChild(pipes_store[i]->GetAnimationObject());
     }
@@ -241,6 +296,10 @@ void MapManager::DrawMap(Util::Renderer& renderer){
 
     for (int i=0;i<int(piranhas_store.size());i++){
         renderer.AddChild(piranhas_store[i]->GetAnimationObject());
+    }
+
+    for (int i=0;i<int(bowser_store.size());i++){
+        renderer.AddChild(bowser_store[i]->GetAnimationObject());
     }
 
     if (hasFlag){
@@ -276,6 +335,14 @@ void MapManager::ClearMap(Util::Renderer& renderer){
     for (int i=0;i<int(piranhas_store.size());i++){
         renderer.RemoveChild(piranhas_store[i]->GetAnimationObject());
     }
+    for (int i=0;i<int(bowser_store.size());i++){
+        renderer.RemoveChild(bowser_store[i]->GetAnimationObject());
+    }
+
+    for (int i=0;i<int(firebars_store.size());i++){
+        firebars_store[i]->RemoveFireballs(renderer);
+        renderer.RemoveChild(firebars_store[i]->GetAnimationObject());
+    }
 
     int fireballs_size = m_fireballs_store.size();
     for (int i = 0; i < fireballs_size; i++) {
@@ -292,10 +359,12 @@ void MapManager::ClearMap(Util::Renderer& renderer){
 
     if (hasCastle){
         renderer.RemoveChild(castle);
+        castle->SetVisible(false);
     }
     
     if (hasCastleFlag){
         renderer.RemoveChild(castle_flag);
+        castle_flag->SetVisible(false);
     }
 
     items_store.clear();
@@ -305,6 +374,8 @@ void MapManager::ClearMap(Util::Renderer& renderer){
     goombas_store.clear();
     koopas_store.clear();
     piranhas_store.clear();
+    bowser_store.clear();
+    firebars_store.clear();
     if (hasFlag){
         flag->GetBox().SetActive(false);
         flag->GetFlagAniObj()->SetVisible(false);
@@ -327,8 +398,16 @@ void MapManager::UpdateMap(Util::Renderer& renderer, std::shared_ptr<CollisionMa
         m_fireballs_store.push(fb);
         renderer.AddChild(fb->GetAnimationObject());
     }
+    CManager->SetMFireballs(m_fireballs_store);
 
-    CManager->SetFireballs(m_fireballs_store);
+    if (level == "1_4"){
+        auto b_fireballs = bowser_store[0]->GetFireballs();
+        for (auto fb : b_fireballs){
+            b_fireballs_store.push(fb);
+            renderer.AddChild(fb->GetAnimationObject());
+        }
+        CManager->SetBFireballs(b_fireballs_store);
+    }
 }
 
 void MapManager::DestroyMarkedObject(Util::Renderer& renderer){
@@ -387,6 +466,17 @@ void MapManager::DestroyMarkedObject(Util::Renderer& renderer){
         }),
         piranhas_store.end());
 
+    for (int i=0;i<int(bowser_store.size());i++){
+        if (bowser_store[i]->IsMarkedDestroy()){
+            renderer.RemoveChild(bowser_store[i]->GetAnimationObject());
+        }
+    }
+    bowser_store.erase(std::remove_if(bowser_store.begin(), bowser_store.end(),
+        [](const std::shared_ptr<Bowser>& enemy) {
+            return enemy->IsMarkedDestroy(); 
+        }),
+        bowser_store.end());
+
     int fireballs_size = m_fireballs_store.size();
     for (int i = 0; i < fireballs_size; i++) {
         auto fb = m_fireballs_store.front();
@@ -396,6 +486,17 @@ void MapManager::DestroyMarkedObject(Util::Renderer& renderer){
             continue;
         }
         m_fireballs_store.push(fb);
+    }
+
+    int b_fireballs_size = b_fireballs_store.size();
+    for (int i = 0; i < b_fireballs_size; i++) {
+        auto fb = b_fireballs_store.front();
+        b_fireballs_store.pop();
+        if (fb->IsMarkedRemove()) {
+            renderer.RemoveChild(fb->GetAnimationObject());
+            continue;
+        }
+        b_fireballs_store.push(fb);
     }
 }
 
@@ -426,5 +527,12 @@ void MapManager::OutOfRangeMarkDestroy(glm::vec2 cam_pos){
                 koopas_store[i]->MarkDestroy();
             }
         }
+    }
+}
+
+void MapManager::RemoveBridge(Util::Renderer& renderer){
+    if (bridge_store.size() > 0){
+        renderer.RemoveChild(bridge_store[0]->GetAnimationObject());
+        bridge_store.erase(bridge_store.begin());
     }
 }

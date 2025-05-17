@@ -5,16 +5,20 @@
 #include "GameUtils/CollisionManager.hpp"
 #include "Blocks/Brick.hpp"
 #include "Blocks/MysteryBlock.hpp"
+#include "Blocks/FireBar.hpp"
 #include "Blocks/Slab.hpp"
 #include "Blocks/Pipe.hpp"
 #include "Blocks/Flag.hpp"
 #include "Blocks/MovingBridge.hpp"
+#include "Blocks/MovingBridge2.hpp"
 #include "Items/Item.hpp"
 #include "Items/FCoin.hpp"
+#include "Items/Axe.hpp"
 #include "Characters/Mario.hpp"
 #include "Characters/Goomba.hpp"
 #include "Characters/Koopa.hpp"
 #include "Characters/Piranha.hpp"
+#include "Characters/Bowser.hpp"
 #include "Util/Renderer.hpp"
 #include "pch.hpp"
 
@@ -22,14 +26,19 @@ class MapManager{
 private:
     std::string level;
     std::vector<std::shared_ptr<Block>> blocks_store;
+    std::vector<std::shared_ptr<Block>> bridge_store; //<- 1-4 bridge block, not the moving bridge
+    std::vector<std::shared_ptr<FireBar>> firebars_store;
     std::vector<std::shared_ptr<Pipe>> pipes_store;
     std::vector<std::shared_ptr<Item>> items_store;
     
     std::vector<std::shared_ptr<Goomba>> goombas_store;
     std::vector<std::shared_ptr<Koopa>> koopas_store;
     std::vector<std::shared_ptr<Piranha>> piranhas_store;
+    std::vector<std::shared_ptr<Bowser>> bowser_store;
 
     std::queue<std::shared_ptr<Fireball>> m_fireballs_store;
+    std::queue<std::shared_ptr<Fireball>> b_fireballs_store;
+    
     std::vector<CollisionBox> floor_boxes;
     std::shared_ptr<Flag> flag;
     std::shared_ptr<Background> background;
@@ -68,9 +77,15 @@ public:
 
     std::queue<std::shared_ptr<Fireball>> GetMFireballs();
 
+    std::vector<std::shared_ptr<FireBar>> GetFirebars();
+
+    std::vector<std::shared_ptr<Bowser>> GetBowser();
+
     std::shared_ptr<Flag> GetFlag();
 
     std::shared_ptr<AnimationObject> GetCastleFlag();
+
+    std::vector<std::shared_ptr<Block>> GetCastleBridge();
 
     void SwitchLevel(std::string new_level);
 
@@ -92,6 +107,7 @@ public:
     //When item goes out of range, mark destroy it
     void OutOfRangeMarkDestroy(glm::vec2 cam_pos);
     
+    void RemoveBridge(Util::Renderer& renderer);
 };
 
 #endif

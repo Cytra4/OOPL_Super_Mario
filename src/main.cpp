@@ -32,7 +32,12 @@ int main(int, char**){
         else if (current_state == App::State::LEVEL2_ANIMATION){
             game.Level2Animation(0.02);
         }
-
+        else if (current_state == App::State::BRIDGE_CLEAR){
+            game.DeleteBridge(0.02);
+        }
+        else if (current_state == App::State::GAME_CLEAR){
+            game.GameClear(0.02);
+        }
         else{
             game.End();
             context->SetExit(true);

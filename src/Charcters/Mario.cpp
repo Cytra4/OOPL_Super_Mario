@@ -295,6 +295,13 @@ void Mario::ShootFireball(){
         fireball->GetAnimationObject()->AddNewAnimation(roll);
         fireball->GetAnimationObject()->AddNewAnimation(explode);
 
+        if (IsFacingRight()){
+            fireball->SetFacingRight(true);
+        }
+        else{
+            fireball->SetFacingRight(false);
+        }
+
         fireballs.push_back(fireball);
     }
 }

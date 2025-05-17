@@ -13,7 +13,7 @@ Block(defaultPath, pos, width, height){
     int choice;
     if (defaultPath == RESOURCE_DIR"/Sprites/Blocks/empty1.png"){choice = 1;}
     else if (defaultPath == RESOURCE_DIR"/Sprites/Blocks/empty2.png"){choice = 2;}
-    else{choice = 3;}
+    else{choice = 4;}
 
     for (int i=1;i<4;i++){
         mys_ani.push_back(RESOURCE_DIR"/Sprites/Blocks/mystery" + std::to_string(choice) + "_" + std::to_string(i) + ".png");

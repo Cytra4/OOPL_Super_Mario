@@ -46,11 +46,19 @@ void App::Start(){
     if (MManager->GetPiranhas().size() > 0){
         CManager->SetPiranhas(MManager->GetPiranhas());
     }
+    if (MManager->GetFirebars().size() > 0){
+        CManager->SetFirebar(MManager->GetFirebars());
+    }
     rendered = true;
 
     CameraPosition = {0.0f,0.0f};
     camPassedFlag = false;
     
+    if (level == "1_4"){
+        CManager->SetRBarrier(MManager->GetBackground()->GetScaledSize().x/2 - 816);
+        CManager->SetBowser(MManager->GetBowser());
+    }
+
     if (level == "1_2A"){
         m_CurrentState = State::LEVEL2_ANIMATION;
     }

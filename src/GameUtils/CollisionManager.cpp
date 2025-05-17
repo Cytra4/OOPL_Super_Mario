@@ -65,6 +65,22 @@ void CollisionManager::UpdateProcess(double time, glm::vec2 CameraPosition){
         }
     }
 
+    for (int i=0;i<int(bowser.size());i++){
+        if (EnemyInCameraRange(bowser[i], mario->GetBox().GetPosition()) && !bowser[i]->IsActive()){
+            bowser[i]->SetActive();
+        }
+        if (bowser[i]->IsActive()){
+            c_flag = false;
+            bowser[i]->Behavior();
+            if (bowser[i]->GetDeath() != 1){
+                bowser[i]->FaceToMario(mario);
+                BlockCollisionProcess(bowser[i], 1);
+            }
+            if (!c_flag){bowser[i]->SetOnGround(false);}
+            bowser[i]->PhysicProcess(time);
+        }        
+    }
+
     for (int i=0;i<int(items.size());i++){
         items[i]->PhysicProcess(time);
         if (items[i]->IsReachedTop()){
@@ -80,12 +96,24 @@ void CollisionManager::UpdateProcess(double time, glm::vec2 CameraPosition){
         auto fb = m_fireballs.front();
         m_fireballs.pop();
         fb->Behavior(time);
-        OtherCollisionProcess(fb);
+        OtherCollisionProcess(fb,0);
         BlockCollisionProcess(fb);
         if (fb->OutOfRange(CameraPosition)) {
             fb->MarkRemove();
         }
         m_fireballs.push(fb);
+    }
+
+    int b_fb_size = b_fireballs.size();
+    for (int i = 0; i < b_fb_size; i++) {
+        auto fb = b_fireballs.front();
+        b_fireballs.pop();
+        fb->Behavior(time);
+        OtherCollisionProcess(fb,1);
+        if (fb->OutOfRange(CameraPosition)) {
+            fb->MarkRemove();
+        }
+        b_fireballs.push(fb);
     }
 
     for (int i=0;i<int(blocks.size());i++){
@@ -248,6 +276,13 @@ void CollisionManager::OtherCollisionProcess(std::shared_ptr<Character> characte
                 c_ani->SetPosition({new_x, c_pos.y});
                 c_box.SetPosition({new_x, c_pos.y});     
             }
+            else{
+                float new_y = (floor_boxes[i].GetPosition().y - floor_boxes[i].GetHeight()/2) - c_box.GetHeight()/2;
+                auto c_velo = character->GetVelocity();
+                c_ani->SetPosition({c_pos.x, new_y});
+                c_box.SetPosition({c_pos.x, new_y});
+                character->SetVelocity({c_velo.x, 0});
+            }  
         }
     }
 
@@ -321,6 +356,19 @@ void CollisionManager::OtherCollisionProcess(std::shared_ptr<Character> characte
         }
     }
 
+    if (mode == 0){
+        for (int i=0;i<int(firebars.size());i++){
+            auto fbs = firebars[i]->GetFireballs();
+            for (int j=0;j<int(fbs.size());j++){
+                auto f_box = fbs[j]->GetBox();
+                if (f_box.ifCollide(c_box)){
+                    mario->Hurt();
+                }
+            }
+        }
+    }
+
+
     if (has_flag && c_box.ifCollide(flag->GetBox()) && flag->GetBox().IsActive()){
         level_clear = true;
     }
@@ -380,7 +428,7 @@ void CollisionManager::OtherCollisionProcess(std::shared_ptr<Item> item){
     }
 }
 
-void CollisionManager::OtherCollisionProcess(std::shared_ptr<Fireball> fb){
+void CollisionManager::OtherCollisionProcess(std::shared_ptr<Fireball> fb, int type){
     auto f_ani = fb->GetAnimationObject();
     auto f_box = fb->GetBox();
     
@@ -415,42 +463,65 @@ void CollisionManager::OtherCollisionProcess(std::shared_ptr<Fireball> fb){
         }
     }
 
-    //Handling fireball and enemies (I'm lazy to write another function for this)
-    for (int i=0;i<int(goombas.size());i++){
-        auto g_box = goombas[i]->GetBox();
-        if (g_box.ifCollide(f_box) && !goombas[i]->IsDead()){
-            if (f_box.GetPosition().x < g_box.GetPosition().x || g_box.GetCurrentState() == CollisionBox::State::LEFT){
-                goombas[i]->SetVelocity(glm::vec2{100,200});
+    if (type == 0){
+        for (int i=0;i<int(goombas.size());i++){
+            auto g_box = goombas[i]->GetBox();
+            if (g_box.ifCollide(f_box) && !goombas[i]->IsDead()){
+                if (f_box.GetPosition().x < g_box.GetPosition().x || g_box.GetCurrentState() == CollisionBox::State::LEFT){
+                    goombas[i]->SetVelocity(glm::vec2{100,200});
+                }
+                else{
+                    goombas[i]->SetVelocity(glm::vec2{-100,200});
+                }
+                goombas[i]->GetAnimationObject()->SetZIndex(60);
+                goombas[i]->SetDeath(2);
+                fb->SetExplode();
             }
-            else{
-                goombas[i]->SetVelocity(glm::vec2{-100,200});
+        }
+
+        for (int i=0;i<int(koopas.size());i++){
+            auto k_box = koopas[i]->GetBox();
+            if (k_box.ifCollide(f_box) && !koopas[i]->IsDead()){
+                if (f_box.GetPosition().x < k_box.GetPosition().x || k_box.GetCurrentState() == CollisionBox::State::LEFT){
+                    koopas[i]->SetVelocity(glm::vec2{100,200});
+                }
+                else{
+                    koopas[i]->SetVelocity(glm::vec2{-100,200});
+                }
+                koopas[i]->GetAnimationObject()->SetZIndex(60);
+                koopas[i]->SetDeath(2);
+                fb->SetExplode();
             }
-            goombas[i]->GetAnimationObject()->SetZIndex(60);
-            goombas[i]->SetDeath(2);
-            fb->SetExplode();
+        }
+
+        for (int i=0;i<int(piranhas.size());i++){
+            auto p_box = piranhas[i]->GetBox();
+            if (p_box.ifCollide(f_box) && !piranhas[i]->IsDead()){
+                piranhas[i]->SetDeath(2);
+                fb->SetExplode();
+            }
+        }
+
+        for (int i=0;i<int(bowser.size());i++){
+            auto b_box = bowser[i]->GetBox();
+            if (b_box.ifCollide(f_box) && !bowser[i]->IsDead()){
+                bowser[i]->Hurt();
+                fb->SetExplode();
+                if (bowser[i]->IsDead()){
+                    if (f_box.GetPosition().x < b_box.GetPosition().x || b_box.GetCurrentState() == CollisionBox::State::LEFT){
+                        bowser[i]->SetVelocity(glm::vec2{-100,200});
+                    }
+                    else{
+                        bowser[i]->SetVelocity(glm::vec2{100,200});
+                    }
+                }
+            }
         }
     }
-
-    for (int i=0;i<int(koopas.size());i++){
-        auto k_box = koopas[i]->GetBox();
-        if (k_box.ifCollide(f_box) && !koopas[i]->IsDead()){
-            if (f_box.GetPosition().x < k_box.GetPosition().x || k_box.GetCurrentState() == CollisionBox::State::LEFT){
-                koopas[i]->SetVelocity(glm::vec2{100,200});
-            }
-            else{
-                koopas[i]->SetVelocity(glm::vec2{-100,200});
-            }
-            koopas[i]->GetAnimationObject()->SetZIndex(60);
-            koopas[i]->SetDeath(2);
-            fb->SetExplode();
-        }
-    }
-
-    for (int i=0;i<int(piranhas.size());i++){
-        auto p_box = piranhas[i]->GetBox();
-        if (p_box.ifCollide(f_box) && !piranhas[i]->IsDead()){
-            piranhas[i]->SetDeath(2);
-            fb->SetExplode();
+    else{
+        auto m_box = mario->GetBox();
+        if (m_box.ifCollide(f_box)){
+            mario->Hurt();
         }
     }
 }
@@ -611,11 +682,14 @@ void CollisionManager::ItemCollisionProcess(){
                     
                 }
             }
-            else if (effect == 3){ //<- This is for invincible star, but I'm still avoiding it
+            else if (effect == 3){ //<- This is for invincible star, but I'm still avoiding it lol
 
             }
             else if (effect == 4){
                 //Coin
+            }
+            else if (effect == 5){
+                game_clear = true;
             }
             items[i]->MarkDestroy();
         }
@@ -653,6 +727,12 @@ void CollisionManager::RemoveMarkedObject(){
         }),
         piranhas.end());
 
+    bowser.erase(std::remove_if(bowser.begin(), bowser.end(),
+        [](const std::shared_ptr<Bowser>& enemy) {
+            return enemy->IsMarkedDestroy(); 
+        }),
+        bowser.end());
+
     int fireballs_size = m_fireballs.size();
     for (int i = 0; i < fireballs_size; i++) {
         auto fb = m_fireballs.front();
@@ -661,14 +741,27 @@ void CollisionManager::RemoveMarkedObject(){
             m_fireballs.push(fb);
         }
     }
+
+    int b_fireballs_size = b_fireballs.size();
+    for (int i = 0; i < b_fireballs_size; i++) {
+        auto fb = b_fireballs.front();
+        b_fireballs.pop();
+        if (!fb->IsMarkedRemove()){
+            b_fireballs.push(fb);
+        }
+    }
 }
 
 void CollisionManager::AddItem(std::shared_ptr<Item> item){
     items.push_back(item);
 }
 
-void CollisionManager::SetFireballs(std::queue<std::shared_ptr<Fireball>> fireballs){
+void CollisionManager::SetMFireballs(std::queue<std::shared_ptr<Fireball>> fireballs){
     m_fireballs = fireballs;
+}
+
+void CollisionManager::SetBFireballs(std::queue<std::shared_ptr<Fireball>> fireballs){
+    b_fireballs = fireballs;
 }
 
 void CollisionManager::SetGoombas(std::vector<std::shared_ptr<Goomba>> goombas){
@@ -683,6 +776,10 @@ void CollisionManager::SetKoopas(std::vector<std::shared_ptr<Koopa>> koopas){
     this->koopas = koopas;
 }
 
+void CollisionManager::SetBowser(std::vector<std::shared_ptr<Bowser>> bowser){
+    this->bowser = bowser;
+}
+
 void CollisionManager::SetFlag(std::shared_ptr<Flag> flag){
     this->flag = flag;
     has_flag = true;
@@ -692,12 +789,23 @@ void CollisionManager::SetItem(std::vector<std::shared_ptr<Item>> items){
     this->items = items;
 }
 
+void CollisionManager::SetFirebar(std::vector<std::shared_ptr<FireBar>> firebars){
+    for (int i=0;i<int(firebars.size());i++){
+        blocks.push_back(firebars[i]);
+    }
+    this->firebars = firebars;
+}
+
 bool CollisionManager::IsLevelCleared(){
     return level_clear;
 }
 
 bool CollisionManager::EnterSecretLevel(){
     return enter_secret_level;
+}
+
+bool CollisionManager::IsGameCleared(){
+    return game_clear;
 }
 
 bool CollisionManager::GetCFlag(){
@@ -711,6 +819,7 @@ void CollisionManager::SetCFlag(bool choice){
 void CollisionManager::ResetStates(){
     enter_secret_level = false;
     level_clear = false;
+    game_clear = false;
 }
 
 bool CollisionManager::EnemyInCameraRange(std::shared_ptr<Character> enemy, glm::vec2 mario_pos){
@@ -731,8 +840,16 @@ void CollisionManager::UpdateLBarrier(std::string level){
     if (level == "1_2" && mario->GetBox().GetPosition().x >= 3840){
         return;
     }
+    if (level == "1_4" && mario->GetBox().GetPosition().x >= 2256){
+        map_barriers[0] = 2256;
+        return;
+    }
 
     map_barriers[0] = mario->GetBox().GetPosition().x - 372;
+}
+
+void CollisionManager::SetRBarrier(float new_pos){
+    map_barriers[1] = new_pos;
 }
 
 std::string CollisionManager::GetPipeEnterLevel(){

@@ -20,7 +20,6 @@ MovingBridge::MovingBridge(std::string defaultPath, glm::vec2 pos, float width, 
 }
 
 void MovingBridge::PhysicProcess(double time){
-    LOG_DEBUG(velocity);
     glm::vec2 bridge_pos = GetAnimationObject()->GetPosition();
     glm::vec2 bridge_velo = velocity;
     double deltaTime = time;

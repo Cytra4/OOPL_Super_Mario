@@ -10,6 +10,9 @@ void App::CamPosAdjust(){
     if (mario_pos.x < leftBound + 384 && !camPassedFlag){
         CameraPosition.x = leftBound + 384;
     }
+    else if (level == "1_4" && m_CurrentState != State::GAME_CLEAR && mario_pos.x > rightBound - 1200){
+        CameraPosition.x = rightBound - 1200;
+    }
     else if (mario_pos.x > rightBound - 384){
         CameraPosition.x = rightBound - 384;
     }
@@ -171,6 +174,62 @@ void App::Level2Animation(double time){
         prev_level = "1_2A";
         level = "1_2";
         m_CurrentState = State::START; 
+    }
+
+    m_Renderer.Update(CameraPosition);
+}
+
+void App::DeleteBridge(double time){
+    bridge_delete_timer -= time;
+    if (bridge_delete_timer <= 0){
+        if (MManager->GetCastleBridge().size() > 0){
+            MManager->RemoveBridge(m_Renderer);
+            bridge_delete_timer = 0.5f;
+        }
+        else{
+            auto bowser = MManager->GetBowser()[0];
+            if (bowser->GetBox().GetPosition().y > -450){
+                bowser->SetDead(true);
+                bowser->SetOnGround(false);
+                bowser->PhysicProcess(time);
+            }
+            else{
+                m_CurrentState = State::GAME_CLEAR;
+            }
+        }
+    }
+    m_Renderer.Update(CameraPosition);
+}
+
+void App::GameClear(double time){
+    CManager->SetRBarrier(MManager->GetBackground()->GetScaledSize().x/2-20);
+    auto ani_obj = mario->GetAnimationObject();
+    
+    if (ani_obj->GetPosition().x < 3432){
+        ani_obj->SetScale(glm::vec2{1,1});
+        if (ani_obj->GetCurrentAnimation() != 0){
+            ani_obj->SetAnimation(0, 25);
+            ani_obj->SetLooping(true);
+            ani_obj->PlayAnimation();
+            ani_obj->SetCurrentAnimation(0);
+        }
+        auto m_velo = mario->GetVelocity();
+        m_velo.x = 250.0f;
+        mario->SetVelocity(m_velo);
+        mario->PhysicProcess(time);
+        CManager->SetCFlag(false);
+        CManager->OtherCollisionProcess(mario, 0);
+        if (!CManager->GetCFlag()){mario->SetOnGround(false);}
+        CamPosAdjust();
+    }
+    else{
+        mario->GetAnimationObject()->SetPosition(glm::vec2{3432,ani_obj->GetPosition().y});
+        mario->GetBox().SetPosition(glm::vec2{3432,ani_obj->GetPosition().y});
+        CameraPosition = glm::vec2{-3456,0};
+        if (ani_obj->GetCurrentAnimation() != -1){
+            ani_obj->SetDefaultSprite(ani_obj->GetDefaultSprite());
+            ani_obj->SetCurrentAnimation(-1);
+        }
     }
 
     m_Renderer.Update(CameraPosition);

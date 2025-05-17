@@ -20,7 +20,6 @@ void Fireball::Behavior(double time){
     AnimationHandle();
 }
 
-//*TO BE DONE
 void Fireball::PhysicProcess(double time){
     glm::vec2 f_pos = ani_obj->GetPosition();
     glm::vec2 f_velo = velocity;
@@ -37,10 +36,14 @@ void Fireball::PhysicProcess(double time){
             SetVelocity(f_velo);
         } 
         else if (type == FireballType::BOWSER){
-    
+            glm::vec2 new_pos;
+            new_pos.x = f_pos.x + deltaTime*velocity.x;
+            new_pos.y = f_pos.y;
+            ani_obj->SetPosition(new_pos);
+            GetBox().SetPosition(new_pos);
         }
         else if (type == FireballType::BLOCK){
-    
+            //Already handled somewhere else lol
         }
         else{
             LOG_ERROR("UNEXPECTED FIREBALL TYPE?");
@@ -77,6 +80,10 @@ void Fireball::AnimationHandle(){
 
     glm::vec2 scale = (IsFacingRight()) ? glm::vec2(1,1) : glm::vec2(-1,1);
     ani_obj->SetScale(scale);
+}
+
+void Fireball::SetFacingRight(bool choice){
+    facingRight = choice;
 }
 
 bool Fireball::IsFacingRight(){

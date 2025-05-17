@@ -24,6 +24,8 @@ public:
         CLEAR_WALK_TO_CASTLE,
         GET_NEXT_STAGE,
         LEVEL2_ANIMATION,
+        BRIDGE_CLEAR,
+        GAME_CLEAR,
         END,
     };
 
@@ -42,6 +44,10 @@ public:
     void PipeEnter(double time, std::string type);
 
     void Level2Animation(double time);
+
+    void DeleteBridge(double time);
+
+    void GameClear(double time);
 
     void End(); // NOLINT(readability-convert-member-functions-to-static)
 
@@ -70,6 +76,7 @@ private:
     
     double m_death_timer = 0.5f;
     double pipe_enter_timer = 0.5f;
+    double bridge_delete_timer = 0.1f;
 
     std::string prev_level = "0";
     std::string level = "1_1";
@@ -82,6 +89,6 @@ private:
 //1.Manage Mario's score
 //2.Manage Mario's live
 //3.Manage the time left in game
-//4.Update the game's phases?
+//4.Manage the texts
 
 #endif

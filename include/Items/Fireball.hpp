@@ -22,7 +22,7 @@ private:
     float gravity = -500.0f;
     bool remove = false;
     bool explode = false;
-    bool facingRight;
+    bool facingRight = false;
 
 public:
     Fireball(FireballType type, std::string ImagePath, int speed, glm::vec2 position, float width, float height);
@@ -36,6 +36,8 @@ public:
     bool OutOfRange(glm::vec2 camPos);
 
     void AnimationHandle();
+
+    void SetFacingRight(bool choice);
 
     bool IsFacingRight();
 
