@@ -319,3 +319,42 @@ void Mario::DestroyMarkedFireball(){
         }),
         fireballs.end());
 }
+
+void Mario::AddCoin(){
+    coins += 1;
+}
+
+void Mario::SetCoin(int coin){
+    coins = coin;
+}
+
+int Mario::GetCoin(){
+    return coins;
+}
+
+void Mario::AddScore(int add){
+    score += add;
+}
+void Mario::SetScore(int score){
+    this->score = score;
+}
+
+int Mario::GetScore(){
+    return score;
+}
+
+void Mario::AddLive(){
+    if (lives < 9){
+        lives += 1;
+    }
+}
+
+void Mario::SetLive(int live){
+    if (live >= 0 && live <= 9){
+        lives = live;
+    }
+}
+
+int Mario::GetLive(){
+    return lives;
+}

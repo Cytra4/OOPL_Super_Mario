@@ -1,7 +1,7 @@
 #include "Items/FCoin.hpp"
 
 FCoin::FCoin(std::string choice, std::string defaultPath, glm::vec2 pos, float width, float height)
-:Item(-1, 4, defaultPath, pos, width, height){
+:Item(-1, 6, defaultPath, pos, width, height){
     std::vector<std::string> coin_anim;
     for (int i=1;i<4;i++){
         coin_anim.push_back(RESOURCE_DIR"/Sprites/Blocks/coin" + choice + "_" + std::to_string(i) + ".png");

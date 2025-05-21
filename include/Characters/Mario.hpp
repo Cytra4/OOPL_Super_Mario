@@ -40,7 +40,29 @@ public:
 
     std::vector<std::shared_ptr<Fireball>> GetFireballs();
 
+    void AddCoin();
+
+    void SetCoin(int coin);
+
+    int GetCoin();
+
+    void AddScore(int add);
+
+    void SetScore(int score);
+
+    int GetScore();
+
+    void AddLive();
+
+    void SetLive(int live);
+
+    int GetLive();
+
 private:
+    int coins = 0;
+    int score = 0;
+    int lives = 3;
+
     int jumpPower;
     int jumpFallGravity = 1;
     Mode mario_mode;

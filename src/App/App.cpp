@@ -1,5 +1,41 @@
 #include "App.hpp"
 
+void App::TitleScreen(){
+    if (!s_initialed){
+        SManager = std::make_shared<SystemManager>();
+        s_initialed = true;
+    }
+    SManager->ShowTitleScreen(m_Renderer);
+    SManager->ShowUI(m_Renderer);
+    SManager->HideTimer();
+    CameraPosition = {0,0};
+    if (Util::Input::IsKeyPressed(Util::Keycode::RETURN)) {
+        SManager->ClearTitleScreen(m_Renderer);
+        m_CurrentState = State::LOADING;
+    }
+
+    if (Util::Input::IsKeyPressed(Util::Keycode::ESCAPE) || Util::Input::IfExit()) {
+        m_CurrentState = State::END;
+    }
+
+    SManager->UIPositionUpdate(CameraPosition);
+    m_Renderer.Update(CameraPosition);
+}
+
+void App::Loading(double time){
+    SManager->ShowLoadingScreen(m_Renderer);
+    SManager->HideTimer();
+    load_timer -= time;
+    if (load_timer <= 0){
+        load_timer = 4.0f;
+        SManager->ClearLoadingScreen(m_Renderer);
+        m_CurrentState = State::START;
+    }
+    CameraPosition = {0,0};
+    SManager->UIPositionUpdate(-CameraPosition);
+    m_Renderer.Update(CameraPosition);
+}
+
 void App::CamPosAdjust(){
     glm::vec2 mario_pos = mario->GetAnimationObject()->GetPosition();
     glm::vec2 map_size = MManager->GetBackground()->GetScaledSize();
@@ -30,16 +66,76 @@ void App::CamPosAdjust(){
 void App::MarioDeath(double time){
     m_death_timer -= time;
     if (m_death_timer <= 0){
-        if (mario->GetBox().GetPosition().y > -450){
+        if (mario->GetBox().GetPosition().y > -500){
             mario->PhysicProcess(time/1.5);
         }
         else{
-            m_CurrentState = State::START;
+            int new_live = mario->GetLive() - 1;
+            mario->SetLive(new_live);
+            if (new_live > 0){
+                SManager->MLiveUpdate(mario->GetLive());
+                if (SManager->IsTimeUp()){
+                    m_CurrentState = State::TIME_UP;
+                }
+                else{
+                    m_CurrentState = State::LOADING;
+                }
+            }
+            else{
+                SManager->MLiveUpdate(mario->GetLive());
+                if (SManager->IsTimeUp()){
+                    m_CurrentState = State::TIME_UP;
+                }
+                else{
+                    m_CurrentState = State::GAME_OVER;
+                }
+            }
+            SManager->ResetTimer();
             m_death_timer = 0.5f;
             mario_initial = false;
         }
     }
     mario->AnimationHandle();
+    m_Renderer.Update(CameraPosition);
+}
+
+void App::TimeUp(double time){
+    SManager->HideTimer();
+    SManager->ShowTimeUpScreen(m_Renderer);
+
+    load_timer -= time;
+    if (load_timer <= 0){
+        if (SManager->GetMLive() > 0){
+            m_CurrentState = State::LOADING;
+        }
+        else{
+            m_CurrentState = State::GAME_OVER;
+        }
+        SManager->ClearTimeUpScreen(m_Renderer);
+        load_timer = 4.0f;
+    }
+
+    CameraPosition = {0,0};
+    SManager->UIPositionUpdate(-CameraPosition);
+    m_Renderer.Update(CameraPosition);
+}
+
+void App::GameOver(double time){
+    SManager->HideTimer();
+    SManager->ShowGameOverScreen(m_Renderer);
+    game_over_timer -= time;
+    if (game_over_timer <= 0){
+        game_over_timer = 4.0f;
+        prev_level = "0";
+        level = "1_1";
+        SManager->ClearGameOverScreen(m_Renderer);
+        SManager->ResetTimer();
+        SManager->ResetMVariables();
+        SManager->UIUpdate(0,0,0,level);
+        m_CurrentState = State::TITLE_SCREEN;
+    }
+    CameraPosition = {0,0};
+    SManager->UIPositionUpdate(-CameraPosition);
     m_Renderer.Update(CameraPosition);
 }
 
@@ -50,6 +146,7 @@ void App::LevelClear(double time){
         ani_obj->SetLooping(true);
         ani_obj->PlayAnimation();
         ani_obj->SetCurrentAnimation(3);
+        SManager->UIUpdate(mario->GetScore(),mario->GetCoin(),0,level);
     }
 
     mario->SetVelocity({0.0f,-250.0f});
@@ -100,6 +197,7 @@ void App::ClearWalkToCastle(double time){
         CManager->OtherCollisionProcess(mario, 0);
         if (!CManager->GetCFlag()){mario->SetOnGround(false);}
         CamPosAdjust();
+        SManager->UIPositionUpdate(-CameraPosition);
     }
     else{
         ani_obj->SetVisible(false);
@@ -114,10 +212,22 @@ void App::ClearWalkToCastle(double time){
             c_flag->SetPosition(flag_finaldes);
             prev_level = level;
             level = MapDataHolder::GetNextLevel(level);
-            m_CurrentState = State::START;
+            SManager->MLiveUpdate(mario->GetLive());
+            m_CurrentState = State::ADD_REMAIN_TIME_TO_SCORE;
         }
     }
 
+    m_Renderer.Update(CameraPosition);
+}
+
+void App::AddTimeToScore(double time){
+    if (SManager->GetTime() > 0){
+        SManager->UIUpdate(mario->GetScore(),mario->GetCoin(),time,level);
+        mario->AddScore(50);
+    }
+    else{
+        m_CurrentState = State::LOADING;
+    }
     m_Renderer.Update(CameraPosition);
 }
 
@@ -176,6 +286,7 @@ void App::Level2Animation(double time){
         m_CurrentState = State::START; 
     }
 
+    SManager->UIPositionUpdate(-CameraPosition);
     m_Renderer.Update(CameraPosition);
 }
 
@@ -230,8 +341,30 @@ void App::GameClear(double time){
             ani_obj->SetDefaultSprite(ani_obj->GetDefaultSprite());
             ani_obj->SetCurrentAnimation(-1);
         }
+
+        game_clear_timer -= time;
+        if (game_clear_timer <= 0){
+            game_clear_timer = 9.0f;
+            SManager->ClearGameClearMessage(m_Renderer);
+            SManager->TopScoreUpdate(mario->GetScore());
+            SManager->ResetMVariables();
+            SManager->ResetTimer();
+            SManager->UIUpdate(0,0,0,"1_1");
+            m_Renderer.RemoveChild(mario->GetAnimationObject());
+            mario_initial = false;
+            prev_level = "0";
+            level = "1_1";
+            m_CurrentState = State::TITLE_SCREEN;
+        }
+        else if (game_clear_timer <= 4.5){
+            SManager->ShowGameClearMessage(m_Renderer,1);
+        }
+        else{
+            SManager->ShowGameClearMessage(m_Renderer,0);
+        }
     }
 
+    SManager->UIPositionUpdate(-CameraPosition);
     m_Renderer.Update(CameraPosition);
 }
 

@@ -1,7 +1,4 @@
 #include "App.hpp"
-#include "Util/Input.hpp"
-#include "Util/Keycode.hpp"
-#include "Util/Logger.hpp"
 
 //Not sure if I'm gonna do all the behavior stuffs here, maybe will do it in another class?
 void App::Update(){
@@ -19,6 +16,7 @@ void App::Update(){
     MManager->OutOfRangeMarkDestroy(-CameraPosition);
     MManager->DestroyMarkedObject(m_Renderer);
     MManager->UpdateMap(m_Renderer, CManager, mario);
+    SManager->UIUpdate(mario->GetScore(),mario->GetCoin(),0.03,level);
 
     if (mario->IsDead() || mario->GetBox().GetPosition().y < -400){
         m_CurrentState = State::MARIO_DEATH;
@@ -41,6 +39,7 @@ void App::Update(){
 
     if (CManager->IsLevelCleared()){
         m_CurrentState = State::LEVEL_CLEAR;
+        mario->AddScore(5000);
         CManager->ResetStates();
     }
     else if (CManager->EnterSecretLevel()){
@@ -59,12 +58,21 @@ void App::Update(){
         CManager->ResetStates();
     }
 
+    if (SManager->IsTimeUp()){
+        m_CurrentState = State::MARIO_DEATH;
+        mario->SetDead(true);
+        mario->SetVelocity(glm::vec2{0.0f,1000.0f});
+    }
+
     if (Util::Input::IsKeyPressed(Util::Keycode::ESCAPE) || Util::Input::IfExit()) {
         m_CurrentState = State::END;
     }
 
     //LOG_DEBUG("CAMERA:{} MARIO:{}",CameraPosition,mario->GetBox().GetPosition());
+    //LOG_DEBUG("MANAGER:{}  MARIO:{}",SManager->GetMLive(),mario->GetLive());
+    
     CManager->UpdateLBarrier(level);
     CamPosAdjust();
+    SManager->UIPositionUpdate(-CameraPosition);
     m_Renderer.Update(CameraPosition);
 }

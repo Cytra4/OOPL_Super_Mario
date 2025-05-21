@@ -4,9 +4,14 @@ void App::Start(){
     if (!mario_initial){
         MarioInitial();
         mario_initial = true;
+        mario->SetCoin(SManager->GetMCoin());
+        mario->SetScore(SManager->GetMScore());
+        mario->SetLive(SManager->GetMLive());
     }
-
     mario->GetAnimationObject()->SetVisible(true);
+    
+    SManager->ShowTimer();
+    
     if (prev_level != level){
         glm::vec2 new_pos = MapDataHolder::GetMarioPosition(level);
         mario->GetAnimationObject()->SetPosition(new_pos);
@@ -21,9 +26,9 @@ void App::Start(){
         }
     }
 
-    if (!initialed){
+    if (!m_initialed){
         MManager = std::make_shared<MapManager>(level);
-        initialed = true;
+        m_initialed = true;
     }
     else{
         MManager->SwitchLevel(level);
@@ -57,6 +62,13 @@ void App::Start(){
     if (level == "1_4"){
         CManager->SetRBarrier(MManager->GetBackground()->GetScaledSize().x/2 - 816);
         CManager->SetBowser(MManager->GetBowser());
+    }
+
+    if (level == "1_2A" && prev_level == "1_1"){
+        SManager->ResetTimer();
+    }
+    else if (level == "1_4" && prev_level == "1_2C"){
+        SManager->ResetTimer();
     }
 
     if (level == "1_2A"){

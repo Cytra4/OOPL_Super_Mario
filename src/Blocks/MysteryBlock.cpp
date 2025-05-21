@@ -34,6 +34,8 @@ void MysteryBlock::SpawnItem(std::shared_ptr<Mario> mario){
     if (itemType == "Coin"){
         item = std::make_shared<Coin>(0, RESOURCE_DIR"/Sprites/Items/coin1.png", spawn_pos, 24.0f, 48.0f);
         item->GetAnimationObject()->SetZIndex(GetAnimationObject()->GetZIndex() - 1);
+        mario->AddCoin();
+        mario->AddScore(200);
     }
     else if (itemType == "Mushroom2"){
         int direction = int(rand() % 2);

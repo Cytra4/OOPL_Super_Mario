@@ -476,6 +476,7 @@ void CollisionManager::OtherCollisionProcess(std::shared_ptr<Fireball> fb, int t
                 goombas[i]->GetAnimationObject()->SetZIndex(60);
                 goombas[i]->SetDeath(2);
                 fb->SetExplode();
+                mario->AddScore(100);
             }
         }
 
@@ -491,6 +492,7 @@ void CollisionManager::OtherCollisionProcess(std::shared_ptr<Fireball> fb, int t
                 koopas[i]->GetAnimationObject()->SetZIndex(60);
                 koopas[i]->SetDeath(2);
                 fb->SetExplode();
+                mario->AddScore(200);
             }
         }
 
@@ -499,6 +501,7 @@ void CollisionManager::OtherCollisionProcess(std::shared_ptr<Fireball> fb, int t
             if (p_box.ifCollide(f_box) && !piranhas[i]->IsDead()){
                 piranhas[i]->SetDeath(2);
                 fb->SetExplode();
+                mario->AddScore(200);
             }
         }
 
@@ -514,6 +517,7 @@ void CollisionManager::OtherCollisionProcess(std::shared_ptr<Fireball> fb, int t
                     else{
                         bowser[i]->SetVelocity(glm::vec2{100,200});
                     }
+                    mario->AddScore(5000);
                 }
             }
         }
@@ -537,6 +541,7 @@ void CollisionManager::EnemyCollisionProcess(){
                     auto m_velo = mario->GetVelocity();
                     m_velo.y = 500;
                     mario->SetVelocity(m_velo);
+                    mario->AddScore(100);
                 }
                 else if (g_state == CollisionBox::State::LEFT || g_state == CollisionBox::State::RIGHT){
                     mario->Hurt();
@@ -561,6 +566,7 @@ void CollisionManager::EnemyCollisionProcess(){
                     auto m_velo = mario->GetVelocity();
                     m_velo.y = 500;
                     mario->SetVelocity(m_velo);
+                    mario->AddScore(100);
                 }
                 else{
                     mario->Hurt();
@@ -669,27 +675,27 @@ void CollisionManager::ItemCollisionProcess(){
                 if (m_mode == Mario::Mode::SMALL){
                     mario->StateUpdate(Mario::Mode::BIG);
                 }
-                else{
-                    //So this part will be handle the score
-                    //*TO BE DONE
-                }
+                mario->AddScore(1000);
             }
             else if (effect == 2){
                 if (m_mode != Mario::Mode::FIRE){
                     mario->StateUpdate(Mario::Mode::FIRE);
                 }
-                else{
-                    
-                }
+                mario->AddScore(1000);
             }
             else if (effect == 3){ //<- This is for invincible star, but I'm still avoiding it lol
 
             }
             else if (effect == 4){
-                //Coin
+                mario->AddLive();
+                mario->AddScore(1000);
             }
             else if (effect == 5){
                 game_clear = true;
+            }
+            else if (effect == 6){
+                mario->AddCoin();
+                mario->AddScore(200);
             }
             items[i]->MarkDestroy();
         }

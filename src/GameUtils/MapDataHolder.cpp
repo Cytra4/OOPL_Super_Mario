@@ -40,7 +40,7 @@ namespace MapDataHolder{
 
     glm::vec2 level1_1_flag_position = {4464,24};
 
-    glm::vec2 level1_1_mpos = {-4896,-262};
+    glm::vec2 level1_1_mpos = {-4920,-262};
 
     std::string level1_1_next = "1_2A";
 
@@ -368,7 +368,7 @@ namespace MapDataHolder{
 
     std::string GetNextLevel(std::string level){
         if (level == "1_1"){
-            return "1_4";
+            return "1_2A";
         }
         else if (level == "1_2"){
             return "1_2C";
