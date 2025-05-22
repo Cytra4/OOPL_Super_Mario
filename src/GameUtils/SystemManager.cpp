@@ -6,6 +6,8 @@ SystemManager::SystemManager(){
     ScreenInit();
     UIInit();
     OtherTextInit();
+
+    sys_SE = std::make_shared<Util::SFX>(RESOURCE_DIR"/SoundEffects/System/beep.wav");
 }
 
 void SystemManager::VariableInit(){
@@ -133,6 +135,18 @@ void SystemManager::ResetTimer(){
     game_time = 300;
     game_time_t = "300";
     time_up = false;
+}
+
+void SystemManager::PlayBeep(){
+    sys_SE->LoadMedia(RESOURCE_DIR"/SoundEffects/System/beep.wav");
+    sys_SE->SetVolume(30);
+    sys_SE->Play();
+}
+
+void SystemManager::PlayGameOver(){
+    sys_SE->LoadMedia(RESOURCE_DIR"/SoundEffects/System/gameover.wav");
+    sys_SE->SetVolume(80);
+    sys_SE->Play();
 }
 
 void SystemManager::ShowTitleScreen(Util::Renderer& renderer){

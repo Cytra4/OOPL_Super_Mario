@@ -1,6 +1,9 @@
 #ifndef IENEMYATTRIBUTE_HPP
 #define IENEMYATTRIBUTE_HPP
 
+
+#include "Util/SFX.hpp"
+
 //The Attributes an enemy may have (Right now is all about death lol)
 
 class IEnemyAttribute{
@@ -10,6 +13,9 @@ protected:
 
     //The time enemy stays dead
     double deathTimer = 1.5f;
+
+    std::shared_ptr<Util::SFX> SE = std::make_shared<Util::SFX>(RESOURCE_DIR"/SoundEffects/Enemy/kickkill.wav");
+
 public:
     IEnemyAttribute() = default;
 
@@ -18,6 +24,8 @@ public:
     int GetDeath();
 
     void SetTimer(double new_time);
+
+    std::shared_ptr<Util::SFX> GetSE();
 };
 
 #endif

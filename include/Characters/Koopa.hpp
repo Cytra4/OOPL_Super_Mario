@@ -3,6 +3,7 @@
 
 #include "Characters/Character.hpp"
 #include "GameUtils/IEnemyAttribute.hpp"
+#include "Util/SFX.hpp"
 
 class Koopa : public Character , public IEnemyAttribute{
 private:

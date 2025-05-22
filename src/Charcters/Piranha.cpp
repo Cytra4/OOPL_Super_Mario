@@ -18,6 +18,7 @@ Piranha::Piranha(int type, glm::vec2 position, glm::vec2 top_pos, float width, f
     GetAnimationObject()->SetLooping(true);
     GetAnimationObject()->PlayAnimation();
     GetAnimationObject()->SetCurrentAnimation(0);
+
 }
 
 void Piranha::SetDeath(int choice){

@@ -25,7 +25,7 @@ void Coin::PhysicProcess(double time){
 
     if (reachedTop){
         new_pos.x = coin_pos.x;
-        new_pos.y = coin_pos.y - deltaTime*upSpeed*1.5;
+        new_pos.y = coin_pos.y - deltaTime*upSpeed*2;
         if (new_pos.y <= init_pos.y){
             new_pos.y = init_pos.y;
             MarkDestroy();
@@ -33,7 +33,7 @@ void Coin::PhysicProcess(double time){
     }
     else{
         new_pos.x = coin_pos.x;
-        new_pos.y = coin_pos.y + deltaTime*upSpeed*1.5;
+        new_pos.y = coin_pos.y + deltaTime*upSpeed*2;
         if (new_pos.y >= final_pos.y){
             new_pos.y = final_pos.y;
             reachedTop = true;

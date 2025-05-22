@@ -64,6 +64,12 @@ void App::CamPosAdjust(){
 }
 
 void App::MarioDeath(double time){
+    if (m_death_timer == 0.5f){
+        std::shared_ptr<Util::SFX> se = mario->Get_SE();
+        se->LoadMedia(RESOURCE_DIR"/SoundEffects/Mario/death.wav");
+        se->SetVolume(80);
+        se->Play();
+    }
     m_death_timer -= time;
     if (m_death_timer <= 0){
         if (mario->GetBox().GetPosition().y > -500){
@@ -121,11 +127,14 @@ void App::TimeUp(double time){
 }
 
 void App::GameOver(double time){
+    if (game_over_timer == 5.0f){
+        SManager->PlayGameOver();
+    }
     SManager->HideTimer();
     SManager->ShowGameOverScreen(m_Renderer);
     game_over_timer -= time;
     if (game_over_timer <= 0){
-        game_over_timer = 4.0f;
+        game_over_timer = 5.0f;
         prev_level = "0";
         level = "1_1";
         SManager->ClearGameOverScreen(m_Renderer);
@@ -147,6 +156,11 @@ void App::LevelClear(double time){
         ani_obj->PlayAnimation();
         ani_obj->SetCurrentAnimation(3);
         SManager->UIUpdate(mario->GetScore(),mario->GetCoin(),0,level);
+
+        auto se = mario->Get_SE();
+        se->LoadMedia(RESOURCE_DIR"/SoundEffects/Mario/flagpole.wav");
+        se->SetVolume(80);
+        se->Play();
     }
 
     mario->SetVelocity({0.0f,-250.0f});
@@ -223,6 +237,7 @@ void App::ClearWalkToCastle(double time){
 void App::AddTimeToScore(double time){
     if (SManager->GetTime() > 0){
         SManager->UIUpdate(mario->GetScore(),mario->GetCoin(),time,level);
+        SManager->PlayBeep();
         mario->AddScore(50);
     }
     else{
@@ -299,6 +314,11 @@ void App::DeleteBridge(double time){
         }
         else{
             auto bowser = MManager->GetBowser()[0];
+            if (!bowser->IsDead()){
+                auto se = bowser->GetSE();
+                se->LoadMedia(RESOURCE_DIR"/SoundEffects/Enemy/bowserfall.wav");
+            }
+
             if (bowser->GetBox().GetPosition().y > -450){
                 bowser->SetDead(true);
                 bowser->SetOnGround(false);

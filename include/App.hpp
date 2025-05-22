@@ -96,7 +96,7 @@ private:
     double pipe_enter_timer = 0.5f;
     double bridge_delete_timer = 0.1f;
     double load_timer = 4.0f;
-    double game_over_timer = 4.0f;
+    double game_over_timer = 5.0f;
     double game_clear_timer = 9.0f;
 
     std::string prev_level = "0";

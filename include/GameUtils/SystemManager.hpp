@@ -12,6 +12,8 @@
 
 class SystemManager{
 private:
+    std::shared_ptr<Util::SFX> sys_SE;
+
     int top_score = 0;
     std::string top_score_t = "0000000";
     int mario_score;
@@ -64,6 +66,10 @@ public:
     void ResetMVariables();
 
     void ResetTimer();
+
+    void PlayBeep();
+
+    void PlayGameOver();
 
     void ShowTitleScreen(Util::Renderer& renderer);
 

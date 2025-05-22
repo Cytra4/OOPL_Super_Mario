@@ -6,6 +6,7 @@ Brick::Brick(std::string defaultPath, glm::vec2 pos, float width, float height)
     init_pos = pos;
     top_pos = pos;
     top_pos.y += 20;
+    brick_SE = std::make_shared<Util::SFX>(RESOURCE_DIR"/SoundEffects/Block/brick.wav");
 }
 
 void Brick::SetVelocity(glm::vec2 new_velo){
@@ -49,8 +50,14 @@ void Brick::ContactBehavior(int choice, std::shared_ptr<Mario> mario){
         if (!IsJumping()){
             SetJump(true);
         }
+        brick_SE->LoadMedia(RESOURCE_DIR"/SoundEffects/Block/bump.wav");
+        brick_SE->SetVolume(80);
+        brick_SE->Play();
     }
     else{
+        brick_SE->LoadMedia(RESOURCE_DIR"/SoundEffects/Block/brick.wav");
+        brick_SE->SetVolume(80);
+        brick_SE->Play();
         GetBox().SetActive(false);
         MarkDestroy();
     }

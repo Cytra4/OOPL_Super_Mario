@@ -15,6 +15,8 @@ private:
     std::string itemType;
     int itemCount;
     bool empty = false;
+
+    std::shared_ptr<Util::SFX> mys_SE;
 public:
     MysteryBlock(std::string itemType, std::string defaultPath, glm::vec2 pos, float width, float height, int count);
 

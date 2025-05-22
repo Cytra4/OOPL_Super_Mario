@@ -20,6 +20,7 @@ Koopa::Koopa(int type, glm::vec2 position, float width, float height)
     GetAnimationObject()->SetCurrentAnimation(0);
 
     SetFacingRight(false);
+
 };
 
 void Koopa::SetDeath(int choice){

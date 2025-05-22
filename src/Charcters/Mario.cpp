@@ -7,6 +7,7 @@ Mario::Mario(int jump, int movespeed, glm::vec2 position, float width, float hei
 : Character(RESOURCE_DIR"/Sprites/Mario/Small/mario_default.png", movespeed, position, width, height){
     jumpPower = jump;
     mario_mode = Mode::SMALL;
+    mario_SE = std::make_shared<Util::SFX>(RESOURCE_DIR"/SoundEffects/Mario/jumpsmall.wav");
 }
 
 Mario::Mode Mario::GetMarioMode(){
@@ -28,6 +29,14 @@ void Mario::Behavior(){
             isJumping = true;
             isJumpKeyHeld = true;
             SetOnGround(false);
+            if (mario_mode == Mode::SMALL){
+                mario_SE->LoadMedia(RESOURCE_DIR"/SoundEffects/Mario/jumpsmall.wav");
+            }
+            else{
+                mario_SE->LoadMedia(RESOURCE_DIR"/SoundEffects/Mario/jump.wav");
+            }
+            mario_SE->SetVolume(80);
+            mario_SE->Play();
         }
     
         if (Util::Input::IsKeyPressed(Util::Keycode::A)){
@@ -109,7 +118,12 @@ void Mario::PhysicProcess(double time){
     }
 
     //Gravity affecting y velocity
-    mario_velo.y = mario_velo.y + deltaTime*gravity*jumpFallGravity;
+    if (IsDead()){
+        mario_velo.y = mario_velo.y + (deltaTime*gravity*jumpFallGravity)/2;
+    }
+    else{
+        mario_velo.y = mario_velo.y + deltaTime*gravity*jumpFallGravity;
+    }
 
     ani_obj->SetPosition(new_pos);
     GetBox().SetPosition(new_pos);
@@ -151,10 +165,16 @@ void Mario::Hurt(){
         if (health == 3){
             StateUpdate(Mode::BIG);
             canTakeDamage = false;
+            mario_SE->LoadMedia(RESOURCE_DIR"/SoundEffects/Mario/pipepowerdown.wav");
+            mario_SE->SetVolume(80);
+            mario_SE->Play();
         }
         else if (health == 2){
             StateUpdate(Mode::SMALL);
             canTakeDamage = false;
+            mario_SE->LoadMedia(RESOURCE_DIR"/SoundEffects/Mario/pipepowerdown.wav");
+            mario_SE->SetVolume(80);
+            mario_SE->Play();
         }
         else if (health == 1){
             SetDead(true);
@@ -303,6 +323,10 @@ void Mario::ShootFireball(){
         }
 
         fireballs.push_back(fireball);
+
+        mario_SE->LoadMedia(RESOURCE_DIR"/SoundEffects/Mario/fireball.wav");
+        mario_SE->SetVolume(80);
+        mario_SE->Play();
     }
 }
 
@@ -321,11 +345,18 @@ void Mario::DestroyMarkedFireball(){
 }
 
 void Mario::AddCoin(){
-    coins += 1;
+    if (coins + 1 < 100){
+        coins += 1;
+        mario_SE->LoadMedia(RESOURCE_DIR"/SoundEffects/Mario/coin.wav");
+        mario_SE->SetVolume(60);
+        mario_SE->Play();
+    }
 }
 
 void Mario::SetCoin(int coin){
-    coins = coin;
+    if (coin <= 99){
+        coins = coin;
+    }
 }
 
 int Mario::GetCoin(){
@@ -346,6 +377,8 @@ int Mario::GetScore(){
 void Mario::AddLive(){
     if (lives < 9){
         lives += 1;
+        mario_SE->LoadMedia(RESOURCE_DIR"/SoundEffects/Mario/1up.wav");
+        mario_SE->Play();
     }
 }
 
@@ -357,4 +390,8 @@ void Mario::SetLive(int live){
 
 int Mario::GetLive(){
     return lives;
+}
+
+std::shared_ptr<Util::SFX> Mario::Get_SE(){
+    return mario_SE;
 }

@@ -2,10 +2,11 @@
 #define BRICK_HPP
 
 #include "Blocks/Block.hpp"
+#include "Util/SFX.hpp"
 
 class Brick : public Block{
 private:
-
+    std::shared_ptr<Util::SFX> brick_SE;
 public:
     Brick(std::string defaultPath, glm::vec2 pos, float width, float height);
 

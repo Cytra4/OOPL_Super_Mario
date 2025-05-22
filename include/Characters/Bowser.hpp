@@ -17,7 +17,7 @@ private:
     //Could be adjusted
     double jump_timer = 1.5f;
     double shoot_timer = 2.0f;
-    double iFrame = 0.5f;
+    double iFrame = 0.25f;
     bool CanBeHurt = true;
     bool GoLeft = true;
 

@@ -3,10 +3,11 @@
 
 #include "Characters/Character.hpp"
 #include "GameUtils/IEnemyAttribute.hpp"
+#include "Util/SFX.hpp"
 
 class Goomba : public Character , public IEnemyAttribute{
 private:
-
+    
 public:
     Goomba(int type, glm::vec2 position, float width, float height);
 

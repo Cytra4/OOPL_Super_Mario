@@ -3,6 +3,7 @@
 
 #include "Characters/Character.hpp"
 #include "GameUtils/IEnemyAttribute.hpp"
+#include "Util/SFX.hpp"
 
 class Piranha : public Character , public IEnemyAttribute{
 private:
@@ -11,6 +12,7 @@ private:
     double stayTimer = 2.0f;
     bool go_up = true;
     bool stop = false;
+
 public:
     Piranha(int type, glm::vec2 position, glm::vec2 top_pos, float width, float height);
 

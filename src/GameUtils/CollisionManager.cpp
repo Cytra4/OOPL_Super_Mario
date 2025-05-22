@@ -157,6 +157,11 @@ void CollisionManager::BlockCollisionProcess(std::shared_ptr<Character> characte
                             else{
                                 goombas[j]->SetVelocity(glm::vec2{-100,200});
                             }
+
+                            auto se = goombas[i]->GetSE();
+                            se->LoadMedia(RESOURCE_DIR"/SoundEffects/Enemy/kickkill.wav");
+                            se->SetVolume(80);
+                            se->Play();
                         }
                     }
 
@@ -170,6 +175,11 @@ void CollisionManager::BlockCollisionProcess(std::shared_ptr<Character> characte
                             else{
                                 koopas[j]->SetVelocity(glm::vec2{-100,200});
                             }
+
+                            auto se = koopas[i]->GetSE();
+                            se->LoadMedia(RESOURCE_DIR"/SoundEffects/Enemy/kickkill.wav");
+                            se->SetVolume(80);
+                            se->Play();
                         }
                     }
                 }
@@ -322,6 +332,11 @@ void CollisionManager::OtherCollisionProcess(std::shared_ptr<Character> characte
                     m_pos.x = p_box.GetPosition().x;
                     c_box.SetPosition(m_pos);
                     character->GetAnimationObject()->SetPosition(m_pos);
+
+                    auto se = mario->Get_SE();
+                    se->LoadMedia(RESOURCE_DIR"/SoundEffects/Mario/pipepowerdown.wav");
+                    se->SetVolume(80);
+                    se->Play();
                 }
             }
             else if (c_state == CollisionBox::State::RIGHT || c_state == CollisionBox::State::LEFT){
@@ -341,6 +356,10 @@ void CollisionManager::OtherCollisionProcess(std::shared_ptr<Character> characte
                             m_pos.y = p_box.GetPosition().y;
                             c_box.SetPosition(m_pos);
                             character->GetAnimationObject()->SetPosition(m_pos);
+                            auto se = mario->Get_SE();
+                            se->LoadMedia(RESOURCE_DIR"/SoundEffects/Mario/pipepowerdown.wav");
+                            se->SetVolume(80);
+                            se->Play();
                         }
                     }
                 }
@@ -475,6 +494,11 @@ void CollisionManager::OtherCollisionProcess(std::shared_ptr<Fireball> fb, int t
                 }
                 goombas[i]->GetAnimationObject()->SetZIndex(60);
                 goombas[i]->SetDeath(2);
+                auto se = goombas[i]->GetSE();
+                se->LoadMedia(RESOURCE_DIR"/SoundEffects/Enemy/kickkill.wav");
+                se->SetVolume(80);
+                se->Play();
+
                 fb->SetExplode();
                 mario->AddScore(100);
             }
@@ -491,6 +515,11 @@ void CollisionManager::OtherCollisionProcess(std::shared_ptr<Fireball> fb, int t
                 }
                 koopas[i]->GetAnimationObject()->SetZIndex(60);
                 koopas[i]->SetDeath(2);
+                auto se = koopas[i]->GetSE();
+                se->LoadMedia(RESOURCE_DIR"/SoundEffects/Enemy/kickkill.wav");
+                se->SetVolume(80);
+                se->Play();
+
                 fb->SetExplode();
                 mario->AddScore(200);
             }
@@ -500,6 +529,11 @@ void CollisionManager::OtherCollisionProcess(std::shared_ptr<Fireball> fb, int t
             auto p_box = piranhas[i]->GetBox();
             if (p_box.ifCollide(f_box) && !piranhas[i]->IsDead()){
                 piranhas[i]->SetDeath(2);
+                auto se = piranhas[i]->GetSE();
+                se->LoadMedia(RESOURCE_DIR"/SoundEffects/Enemy/kickkill.wav");
+                se->SetVolume(80);
+                se->Play();
+
                 fb->SetExplode();
                 mario->AddScore(200);
             }
@@ -517,6 +551,11 @@ void CollisionManager::OtherCollisionProcess(std::shared_ptr<Fireball> fb, int t
                     else{
                         bowser[i]->SetVelocity(glm::vec2{100,200});
                     }
+                    auto se = bowser[i]->GetSE();
+                    se->LoadMedia(RESOURCE_DIR"/SoundEffects/Enemy/kickkill.wav");
+                    se->SetVolume(80);
+                    se->Play();
+
                     mario->AddScore(5000);
                 }
             }
@@ -542,6 +581,11 @@ void CollisionManager::EnemyCollisionProcess(){
                     m_velo.y = 500;
                     mario->SetVelocity(m_velo);
                     mario->AddScore(100);
+
+                    auto se = goombas[i]->GetSE();
+                    se->LoadMedia(RESOURCE_DIR"/SoundEffects/Enemy/stomp.wav");
+                    se->SetVolume(80);
+                    se->Play();
                 }
                 else if (g_state == CollisionBox::State::LEFT || g_state == CollisionBox::State::RIGHT){
                     mario->Hurt();
@@ -567,6 +611,11 @@ void CollisionManager::EnemyCollisionProcess(){
                     m_velo.y = 500;
                     mario->SetVelocity(m_velo);
                     mario->AddScore(100);
+
+                    auto se = koopas[i]->GetSE();
+                    se->LoadMedia(RESOURCE_DIR"/SoundEffects/Enemy/stomp.wav");
+                    se->SetVolume(80);
+                    se->Play();
                 }
                 else{
                     mario->Hurt();
@@ -674,12 +723,20 @@ void CollisionManager::ItemCollisionProcess(){
             if (effect == 1){
                 if (m_mode == Mario::Mode::SMALL){
                     mario->StateUpdate(Mario::Mode::BIG);
+                    auto se = mario->Get_SE();
+                    se->LoadMedia(RESOURCE_DIR"/SoundEffects/Mario/powerup.wav");
+                    se->SetVolume(80);
+                    se->Play();
                 }
                 mario->AddScore(1000);
             }
             else if (effect == 2){
                 if (m_mode != Mario::Mode::FIRE){
                     mario->StateUpdate(Mario::Mode::FIRE);
+                    auto se = mario->Get_SE();
+                    se->LoadMedia(RESOURCE_DIR"/SoundEffects/Mario/powerup.wav");
+                    se->SetVolume(80);
+                    se->Play();
                 }
                 mario->AddScore(1000);
             }

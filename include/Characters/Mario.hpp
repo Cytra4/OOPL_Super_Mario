@@ -3,6 +3,7 @@
 
 #include "Character.hpp"
 #include "Items/Fireball.hpp"
+#include "Util/SFX.hpp"
 
 class Mario : public Character{
 public:
@@ -58,6 +59,8 @@ public:
 
     int GetLive();
 
+    std::shared_ptr<Util::SFX> Get_SE();
+
 private:
     int coins = 0;
     int score = 0;
@@ -74,6 +77,8 @@ private:
     bool canTakeDamage = true;
     double iFrames = 2.5f;
     std::vector<std::shared_ptr<Fireball>> fireballs;
+
+    std::shared_ptr<Util::SFX> mario_SE;
 };
 
 // Animations:

@@ -23,6 +23,8 @@ Block(defaultPath, pos, width, height){
     GetAnimationObject()->SetLooping(true);
     GetAnimationObject()->PlayAnimation();
     GetAnimationObject()->SetCurrentAnimation(0);
+
+    mys_SE = std::make_shared<Util::SFX>(RESOURCE_DIR"/SoundEffects/Block/item.wav");
 }
 
 void MysteryBlock::SpawnItem(std::shared_ptr<Mario> mario){
@@ -44,6 +46,10 @@ void MysteryBlock::SpawnItem(std::shared_ptr<Mario> mario){
         item->GetAnimationObject()->SetZIndex(GetAnimationObject()->GetZIndex() - 1);
         item->SetStandingOnBlock(GetBox());
         item->SetOnGround(true);
+
+        mys_SE->LoadMedia(RESOURCE_DIR"/SoundEffects/Block/item.wav");
+        mys_SE->SetVolume(80);
+        mys_SE->Play();
     }
     else if (m_mode == Mario::Mode::SMALL){
         int direction = int(rand() % 2);
@@ -52,11 +58,19 @@ void MysteryBlock::SpawnItem(std::shared_ptr<Mario> mario){
         item->GetAnimationObject()->SetZIndex(GetAnimationObject()->GetZIndex() - 1);
         item->SetStandingOnBlock(GetBox());
         item->SetOnGround(true);
+
+        mys_SE->LoadMedia(RESOURCE_DIR"/SoundEffects/Block/item.wav");
+        mys_SE->SetVolume(80);
+        mys_SE->Play();
     }
     else if (m_mode == Mario::Mode::BIG || m_mode == Mario::Mode::FIRE){
         item = std::make_shared<FireFlower>(2, RESOURCE_DIR"/Sprites/Items/fireflower1.png"
             , spawn_pos, 48.0f, 48.0f);
         item->GetAnimationObject()->SetZIndex(GetAnimationObject()->GetZIndex() - 1);
+
+        mys_SE->LoadMedia(RESOURCE_DIR"/SoundEffects/Block/item.wav");
+        mys_SE->SetVolume(80);
+        mys_SE->Play();
     }
 }
 
