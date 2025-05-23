@@ -158,7 +158,7 @@ void CollisionManager::BlockCollisionProcess(std::shared_ptr<Character> characte
                                 goombas[j]->SetVelocity(glm::vec2{-100,200});
                             }
 
-                            auto se = goombas[i]->GetSE();
+                            auto se = mario->Get_SE();
                             se->LoadMedia(RESOURCE_DIR"/SoundEffects/Enemy/kickkill.wav");
                             se->SetVolume(80);
                             se->Play();
@@ -677,6 +677,10 @@ void CollisionManager::EECollisionProcess(std::shared_ptr<Goomba> goomba, int in
         else{
             auto e_box = koopas[i]->GetBox();
             if (e_box.ifCollide(goomba->GetBox())){
+                auto se = koopas[i]->GetSE();
+                se->LoadMedia(RESOURCE_DIR"/SoundEffects/Enemy/kickkill.wav");
+                se->SetVolume(80);
+                se->Play();
                 goomba->SetDeath(2);
             }
         }
@@ -707,6 +711,10 @@ void CollisionManager::EECollisionProcess(std::shared_ptr<Koopa> koopa, int inde
         else{
             auto e_box = koopas[i]->GetBox();
             if (i != index && e_box.ifCollide(koopa->GetBox()) && koopas[i]->IsActive()){
+                auto se = koopa->GetSE();
+                se->LoadMedia(RESOURCE_DIR"/SoundEffects/Enemy/kickkill.wav");
+                se->SetVolume(80);
+                se->Play();
                 koopa->SetDeath(2);
             }
         }

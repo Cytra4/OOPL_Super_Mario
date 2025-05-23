@@ -8,6 +8,7 @@ SystemManager::SystemManager(){
     OtherTextInit();
 
     sys_SE = std::make_shared<Util::SFX>(RESOURCE_DIR"/SoundEffects/System/beep.wav");
+    sys_BGM = std::make_shared<Util::BGM>(RESOURCE_DIR"/BGM/GroundTheme.mp3");
 }
 
 void SystemManager::VariableInit(){
@@ -147,6 +148,43 @@ void SystemManager::PlayGameOver(){
     sys_SE->LoadMedia(RESOURCE_DIR"/SoundEffects/System/gameover.wav");
     sys_SE->SetVolume(80);
     sys_SE->Play();
+}
+
+void SystemManager::PlayBGM(){
+    if (current_level == "1_2A"){
+        return;
+    }
+
+    if (current_level == "1_1" || current_level == "1_2C"){
+        sys_BGM->LoadMedia(RESOURCE_DIR"/BGM/GroundTheme.mp3");
+        sys_BGM->SetVolume(80);
+        sys_BGM->Play();
+    }
+    else if (current_level == "1_1A" || current_level == "1_2" || current_level == "1_2B"){
+        sys_BGM->LoadMedia(RESOURCE_DIR"/BGM/UndergroundTheme.mp3");
+        sys_BGM->SetVolume(80);
+        sys_BGM->Play();
+    }
+    else if (current_level == "1_4"){
+        sys_BGM->LoadMedia(RESOURCE_DIR"/BGM/CastleTheme.mp3");
+        sys_BGM->SetVolume(80);
+        sys_BGM->Play();
+    }
+}
+
+void SystemManager::PauseBGM(){
+    sys_BGM->Pause();
+}
+
+void SystemManager::PlayComplete(){
+    if (current_level != "1_4"){
+        sys_BGM->LoadMedia(RESOURCE_DIR"/BGM/LevelComplete.mp3");
+    }
+    else{
+        sys_BGM->LoadMedia(RESOURCE_DIR"/BGM/CastleComplete.mp3");
+    }
+    sys_BGM->SetVolume(80);
+    sys_BGM->Play(0);
 }
 
 void SystemManager::ShowTitleScreen(Util::Renderer& renderer){

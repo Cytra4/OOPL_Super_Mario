@@ -89,6 +89,7 @@ private:
     bool m_initialed = false;
     bool s_initialed = false;
     bool mario_initial = false;
+    bool played1_2 = false;
 
     std::shared_ptr<Mario> mario;
     

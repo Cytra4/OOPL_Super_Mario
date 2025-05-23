@@ -4,6 +4,7 @@
 #include "Characters/Mario.hpp"
 #include "GameUtils/AnimationObject.hpp"
 #include "Util/Renderer.hpp"
+#include "Util/BGM.hpp"
 
 //This manager will manage system related variables, 
 //ex: mario's score, coins, current level...
@@ -13,6 +14,7 @@
 class SystemManager{
 private:
     std::shared_ptr<Util::SFX> sys_SE;
+    std::shared_ptr<Util::BGM> sys_BGM;
 
     int top_score = 0;
     std::string top_score_t = "0000000";
@@ -70,6 +72,12 @@ public:
     void PlayBeep();
 
     void PlayGameOver();
+
+    void PlayBGM();
+
+    void PauseBGM();
+
+    void PlayComplete();
 
     void ShowTitleScreen(Util::Renderer& renderer);
 

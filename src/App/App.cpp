@@ -7,6 +7,7 @@ void App::TitleScreen(){
     }
     SManager->ShowTitleScreen(m_Renderer);
     SManager->ShowUI(m_Renderer);
+    SManager->PauseBGM();
     SManager->HideTimer();
     CameraPosition = {0,0};
     if (Util::Input::IsKeyPressed(Util::Keycode::RETURN)) {
@@ -69,6 +70,8 @@ void App::MarioDeath(double time){
         se->LoadMedia(RESOURCE_DIR"/SoundEffects/Mario/death.wav");
         se->SetVolume(80);
         se->Play();
+
+        SManager->PauseBGM();
     }
     m_death_timer -= time;
     if (m_death_timer <= 0){
@@ -199,6 +202,8 @@ void App::ClearWalkToCastle(double time){
         ani_obj->SetLooping(true);
         ani_obj->PlayAnimation();
         ani_obj->SetCurrentAnimation(0);
+
+        SManager->PlayComplete();
     }
 
     if (mario->GetBox().GetPosition().x < castle_pos.x){
@@ -286,6 +291,14 @@ void App::Level2Animation(double time){
         ani_obj->SetCurrentAnimation(0);
     }
 
+    if (ani_obj->GetPosition().x >= 96 && !played1_2){
+        auto se = mario->Get_SE();
+        se->LoadMedia(RESOURCE_DIR"/SoundEffects/Mario/pipepowerdown.wav");
+        se->SetVolume(80);
+        se->Play();
+        played1_2 = true;
+    }
+
     if (ani_obj->GetPosition().x < 192){
         auto m_velo = mario->GetVelocity();
         m_velo.x = 150.0f;
@@ -298,6 +311,7 @@ void App::Level2Animation(double time){
     else{
         prev_level = "1_2A";
         level = "1_2";
+        played1_2 = false;
         m_CurrentState = State::START; 
     }
 
@@ -310,13 +324,15 @@ void App::DeleteBridge(double time){
     if (bridge_delete_timer <= 0){
         if (MManager->GetCastleBridge().size() > 0){
             MManager->RemoveBridge(m_Renderer);
-            bridge_delete_timer = 0.5f;
+            bridge_delete_timer = 0.1f;
         }
         else{
             auto bowser = MManager->GetBowser()[0];
             if (!bowser->IsDead()){
                 auto se = bowser->GetSE();
                 se->LoadMedia(RESOURCE_DIR"/SoundEffects/Enemy/bowserfall.wav");
+                se->SetVolume(80);
+                se->Play();
             }
 
             if (bowser->GetBox().GetPosition().y > -450){
@@ -336,6 +352,10 @@ void App::GameClear(double time){
     CManager->SetRBarrier(MManager->GetBackground()->GetScaledSize().x/2-20);
     auto ani_obj = mario->GetAnimationObject();
     
+    if (game_clear_timer == 9.0f){
+        SManager->PlayComplete();
+    }
+
     if (ani_obj->GetPosition().x < 3432){
         ani_obj->SetScale(glm::vec2{1,1});
         if (ani_obj->GetCurrentAnimation() != 0){

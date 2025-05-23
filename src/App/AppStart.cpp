@@ -71,6 +71,9 @@ void App::Start(){
         SManager->ResetTimer();
     }
 
+    SManager->levelUpdate(level);
+    SManager->PlayBGM();
+
     if (level == "1_2A"){
         m_CurrentState = State::LEVEL2_ANIMATION;
     }
