@@ -368,7 +368,8 @@ namespace MapDataHolder{
 
     std::string GetNextLevel(std::string level){
         if (level == "1_1"){
-            return "1_2A";
+            return "1_4";
+            //return "1_2A";
         }
         else if (level == "1_2"){
             return "1_2C";

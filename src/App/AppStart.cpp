@@ -67,7 +67,7 @@ void App::Start(){
     if (level == "1_2A" && prev_level == "1_1"){
         SManager->ResetTimer();
     }
-    else if (level == "1_4" && prev_level == "1_2C"){
+    else if (level == "1_4"){
         SManager->ResetTimer();
     }
 

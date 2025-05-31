@@ -351,6 +351,13 @@ void MapManager::ClearMap(Util::Renderer& renderer){
         renderer.RemoveChild(fb->GetAnimationObject());
     }
 
+    fireballs_size = b_fireballs_store.size();
+    for (int i = 0; i < fireballs_size; i++) {
+        auto fb = b_fireballs_store.front();
+        b_fireballs_store.pop();
+        renderer.RemoveChild(fb->GetAnimationObject());
+    }
+
     renderer.RemoveChild(background);
     if (hasFlag){
         renderer.RemoveChild(flag->GetAnimationObject());
@@ -401,12 +408,14 @@ void MapManager::UpdateMap(Util::Renderer& renderer, std::shared_ptr<CollisionMa
     CManager->SetMFireballs(m_fireballs_store);
 
     if (level == "1_4"){
-        auto b_fireballs = bowser_store[0]->GetFireballs();
-        for (auto fb : b_fireballs){
-            b_fireballs_store.push(fb);
-            renderer.AddChild(fb->GetAnimationObject());
+        if (bowser_store.size() > 0){
+            auto b_fireballs = bowser_store[0]->GetFireballs();
+            for (auto fb : b_fireballs){
+                b_fireballs_store.push(fb);
+                renderer.AddChild(fb->GetAnimationObject());
+            }
+            CManager->SetBFireballs(b_fireballs_store);
         }
-        CManager->SetBFireballs(b_fireballs_store);
     }
 }
 
@@ -532,7 +541,7 @@ void MapManager::OutOfRangeMarkDestroy(glm::vec2 cam_pos){
 
 void MapManager::RemoveBridge(Util::Renderer& renderer){
     if (bridge_store.size() > 0){
-        renderer.RemoveChild(bridge_store[0]->GetAnimationObject());
-        bridge_store.erase(bridge_store.begin());
+        renderer.RemoveChild(bridge_store[bridge_store.size()-1]->GetAnimationObject());
+        bridge_store.pop_back();
     }
 }

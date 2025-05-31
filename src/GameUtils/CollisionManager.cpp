@@ -546,10 +546,10 @@ void CollisionManager::OtherCollisionProcess(std::shared_ptr<Fireball> fb, int t
                 fb->SetExplode();
                 if (bowser[i]->IsDead()){
                     if (f_box.GetPosition().x < b_box.GetPosition().x || b_box.GetCurrentState() == CollisionBox::State::LEFT){
-                        bowser[i]->SetVelocity(glm::vec2{-100,200});
+                        bowser[i]->SetVelocity(glm::vec2{100,200});
                     }
                     else{
-                        bowser[i]->SetVelocity(glm::vec2{100,200});
+                        bowser[i]->SetVelocity(glm::vec2{-100,200});
                     }
                     auto se = bowser[i]->GetSE();
                     se->LoadMedia(RESOURCE_DIR"/SoundEffects/Enemy/kickkill.wav");
@@ -692,7 +692,7 @@ void CollisionManager::EECollisionProcess(std::shared_ptr<Koopa> koopa, int inde
         return;
     }
     for (int i=0;i<int(koopas.size());i++){
-        if (i != index && !koopas[i]->IsKicked()){
+        if (i != index && !koopas[i]->IsKicked() && !koopas[i]->IsDead()){
             auto e_box = koopas[i]->GetBox();
             if (e_box.ifCollide(koopa->GetBox())){
                 CollisionBox::State e_state = e_box.GetCurrentState();

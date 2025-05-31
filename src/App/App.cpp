@@ -170,12 +170,6 @@ void App::LevelClear(double time){
     if (ani_obj->GetPosition().y > -168){
         mario->PhysicProcess(time);
     }
-    else{
-        if (flagDowned){
-            m_CurrentState = State::CLEAR_WALK_TO_CASTLE;
-            flagDowned = false;
-        }
-    }
 
     auto f_pos = MManager->GetFlag()->GetFlagAniObj()->GetPosition();
     if (f_pos.y > -192){
@@ -187,6 +181,11 @@ void App::LevelClear(double time){
         f_pos.y = -192;
         MManager->GetFlag()->GetFlagAniObj()->SetPosition(f_pos);
         flagDowned = true;
+    }
+
+    if (flagDowned){
+            m_CurrentState = State::CLEAR_WALK_TO_CASTLE;
+            flagDowned = false;
     }
 
     m_Renderer.Update(CameraPosition);

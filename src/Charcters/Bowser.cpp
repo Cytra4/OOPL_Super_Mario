@@ -46,7 +46,7 @@ void Bowser::PhysicProcess(double time){
     new_pos.x = b_pos.x + deltaTime*b_velo.x;
     new_pos.y = b_pos.y + deltaTime*b_velo.y;
 
-    if (b_pos.y < -400){
+    if (IsDead() && b_pos.y < -450){
         MarkDestroy();
     }
     
