@@ -118,7 +118,8 @@ namespace MapDataHolder{
 
     glm::vec2 level1_2_mpos = {-4464,216};
 
-    std::vector<std::vector<int>> level1_2_piranha_setting = {{2,384,-229},{3,672,-229},{1,960,-229}};
+    std::vector<std::vector<int>> level1_2_piranha_setting = {{2,384,-229},{3,672,-229}};
+    //{1,960,-229}
 
     //=================================================
 
@@ -368,8 +369,7 @@ namespace MapDataHolder{
 
     std::string GetNextLevel(std::string level){
         if (level == "1_1"){
-            return "1_4";
-            //return "1_2A";
+            return "1_2A";
         }
         else if (level == "1_2"){
             return "1_2C";

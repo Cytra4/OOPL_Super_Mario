@@ -575,7 +575,7 @@ void CollisionManager::EnemyCollisionProcess(){
             auto g_box = goombas[i]->GetBox();
             if (g_box.ifCollide(mario->GetBox())){
                 CollisionBox::State g_state = g_box.GetCurrentState();
-                if (g_state == CollisionBox::State::TOP && mario->GetBox().GetPosition().y > g_box.GetPosition().y){
+                if (g_state == CollisionBox::State::TOP){
                     goombas[i]->SetDeath(1);
                     auto m_velo = mario->GetVelocity();
                     m_velo.y = 500;
