@@ -376,6 +376,7 @@ void MapManager::ClearMap(Util::Renderer& renderer){
 
     items_store.clear();
     blocks_store.clear();
+    bridge_store.clear();
     pipes_store.clear();
     floor_boxes.clear();
     goombas_store.clear();
